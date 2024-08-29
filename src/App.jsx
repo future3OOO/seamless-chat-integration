@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import TailwindTest from './components/TailwindTest';
 
 const App = () => {
+  // Add a simple state to test Tailwind classes
+  const [count, setCount] = useState(0);
   const [formData, setFormData] = useState({
     full_name: '',
     address: '',
@@ -45,6 +47,20 @@ const App = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <TailwindTest />
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md mt-4">
+        <h1 className="custom-heading">Tailwind Test</h1>
+        <p className="text-gray-600 mb-4">Count: {count}</p>
+        <button 
+          className="custom-button mr-2"
+          onClick={() => setCount(count + 1)}
+        >
+          Increment
+        </button>
+        <button 
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+          onClick={() => setCount(0)}
+        >
+          Reset
+        </button>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

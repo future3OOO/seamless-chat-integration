@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TailwindTest from './components/TailwindTest';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -41,8 +42,9 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <TailwindTest />
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md mt-4">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

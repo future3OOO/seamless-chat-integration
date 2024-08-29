@@ -15,9 +15,12 @@ const Index = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Submit Details</CardTitle>
-          <CardDescription>Please fill out the form below to submit your details.</CardDescription>
+        <CardHeader className="flex flex-row items-center space-x-4">
+          <img src="/logo.svg" alt="Logo" className="w-12 h-12" />
+          <div>
+            <CardTitle className="text-2xl font-bold">Submit Details</CardTitle>
+            <CardDescription>Please fill out the form below to submit your details.</CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

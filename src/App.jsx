@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -26,14 +25,20 @@ const App = () => {
     }
 
     try {
-      const response = await axios.post('/submit', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      // For now, we'll just log the form data
+      console.log('Form data:', Object.fromEntries(data));
+      alert('Form submitted successfully!');
+      // Reset form
+      setFormData({
+        full_name: '',
+        address: '',
+        email: '',
+        issue: '',
+        image: null
       });
-      console.log('Form submitted successfully:', response.data);
-      // Reset form or show success message
     } catch (error) {
       console.error('Error submitting form:', error);
-      // Show error message to user
+      alert('Error submitting form. Please try again.');
     }
   };
 

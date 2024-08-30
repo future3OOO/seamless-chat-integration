@@ -3,7 +3,6 @@ from flask_cors import CORS
 import subprocess
 import os
 import logging
-import shutil
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -13,7 +12,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Set up Flask app with explicit template and static folder paths
 app = Flask(__name__, 
-            static_folder=os.path.join(current_dir, 'public'),
+            static_folder=os.path.join(current_dir, 'build'),
             static_url_path='',
             template_folder=os.path.join(current_dir, 'templates'))
 CORS(app)  # Enable CORS for all routes
@@ -29,15 +28,15 @@ def serve(path):
     if path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
-    elif path == '' or path == 'index.html':
-        logging.debug("Serving index.html from public folder")
+    elif path == '':
+        logging.debug("Serving index.html for root path")
         return send_from_directory(app.static_folder, 'index.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logging.debug(f"Path not found: {path}, serving index.html from public folder")
-        return send_from_directory(app.static_folder, 'index.html')
+        logging.debug(f"Path not found: {path}")
+        return "Not Found", 404
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -105,18 +104,13 @@ if __name__ == '__main__':
         os.makedirs(build_folder)
         logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
     
-    # Ensure index.html exists in both public and build folders
-    public_index_html = os.path.join(current_dir, 'public', 'index.html')
-    build_index_html = os.path.join(build_folder, 'index.html')
-    
-    if not os.path.exists(public_index_html):
-        logging.error("index.html not found in the public folder. Please ensure it exists.")
-    else:
-        logging.info("index.html found in the public folder")
-        # Copy index.html from public to build folder if it doesn't exist in build
-        if not os.path.exists(build_index_html):
-            shutil.copy2(public_index_html, build_index_html)
-            logging.info("Copied index.html from public to build folder")
+    # Copy index.html to the build folder if it doesn't exist
+    index_html_src = os.path.join(current_dir, 'index.html')
+    index_html_dest = os.path.join(build_folder, 'index.html')
+    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
+        import shutil
+        shutil.copy2(index_html_src, index_html_dest)
+        logging.info("Copied index.html to the build folder")
     
     # Run npm run build to generate the assets
     try:

@@ -10,6 +10,7 @@ const App = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -37,7 +38,7 @@ const App = () => {
     }
 
     try {
-      const response = await fetch('/submit', {
+      const response = await fetchWithRetry('/submit', {
         method: 'POST',
         body: data,
       });
@@ -53,8 +54,6 @@ const App = () => {
           issue: '',
           image: null
         });
-      } else if (response.status === 429) {
-        throw new Error('Too many requests. Please try again later.');
       } else {
         throw new Error('Server response was not ok.');
       }
@@ -63,6 +62,25 @@ const App = () => {
       setError(error.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchWithRetry = async (url, options, maxRetries = 3) => {
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 429 && retryCount < maxRetries) {
+        const retryAfter = response.headers.get('Retry-After') || 5;
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        setRetryCount(prevCount => prevCount + 1);
+        return fetchWithRetry(url, options, maxRetries);
+      }
+      return response;
+    } catch (error) {
+      if (retryCount < maxRetries) {
+        setRetryCount(prevCount => prevCount + 1);
+        return fetchWithRetry(url, options, maxRetries);
+      }
+      throw error;
     }
   };
 
@@ -80,7 +98,7 @@ const App = () => {
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Error</h2>
           <p className="text-center text-gray-800">{error}</p>
-          <button onClick={() => setError(null)} className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+          <button onClick={() => {setError(null); setRetryCount(0);}} className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
             Try Again
           </button>
         </div>
@@ -121,14 +139,5 @@ const App = () => {
     </div>
   );
 };
-
-// Note: This comment is to demonstrate the changes needed in package.json
-// Add the following scripts to package.json:
-// "scripts": {
-//   "dev": "vite",
-//   "build": "vite build",
-//   "build:dev": "vite build --mode development",
-//   "preview": "vite preview"
-// }
 
 export default App;

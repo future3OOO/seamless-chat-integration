@@ -105,12 +105,19 @@ if __name__ == '__main__':
         logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
     
     # Copy index.html to the build folder if it doesn't exist
-    index_html_src = os.path.join(current_dir, 'public', 'index.html')
+    index_html_src = os.path.join(current_dir, 'index.html')
     index_html_dest = os.path.join(build_folder, 'index.html')
     if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
         import shutil
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
+    
+    # Run npm run build to generate the assets
+    try:
+        subprocess.run(["npm", "run", "build"], check=True)
+        logging.info("Successfully built React app")
+    except subprocess.CalledProcessError:
+        logging.error("Failed to build React app. Make sure npm is installed and the build script is correct.")
     
     port = 8000
     host = 'localhost'

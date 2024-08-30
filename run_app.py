@@ -4,7 +4,7 @@ import sys
 import shutil
 
 # Define the full paths to npm and node executables
-NPM_PATH = r"C:\Program Files\nodejs\node_modules\npm\bin\npm.cmd"
+NPM_PATH = r"C:\Program Files\nodejs\npm.cmd"
 NODE_PATH = r"C:\Program Files\nodejs\node.exe"
 
 def check_npm():
@@ -14,7 +14,8 @@ def check_npm():
         npm_version = result.stdout.strip()
         print(f"npm version: {npm_version}")
         return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        print(f"Error checking npm: {e}")
         print(f"npm is not found at {NPM_PATH}")
         return False
 
@@ -25,7 +26,8 @@ def check_node():
         node_version = result.stdout.strip()
         print(f"Node.js version: {node_version}")
         return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        print(f"Error checking Node.js: {e}")
         print(f"Node.js is not found at {NODE_PATH}")
         return False
 
@@ -51,7 +53,11 @@ def install_dependencies():
     print("Checking Node.js dependencies...")
     if not os.path.exists('node_modules'):
         print("Installing Node.js dependencies...")
-        subprocess.check_call([NPM_PATH, "install"])
+        try:
+            subprocess.check_call([NPM_PATH, "install"])
+        except subprocess.CalledProcessError as e:
+            print(f"Error installing Node.js dependencies: {e}")
+            sys.exit(1)
     else:
         print("Node.js dependencies already installed.")
     return True
@@ -62,13 +68,18 @@ def build_react_app():
         subprocess.check_call([NPM_PATH, "run", "build"])
         print("React app built successfully.")
         return True
-    except subprocess.CalledProcessError:
-        print("Error: Failed to build React app. Please check your package.json for the correct build script.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: Failed to build React app. Error: {e}")
+        print("Please check your package.json for the correct build script.")
         return False
 
 def run_flask_server():
     print("Starting Flask server...")
-    subprocess.check_call([sys.executable, "app.py"])
+    try:
+        subprocess.check_call([sys.executable, "app.py"])
+    except subprocess.CalledProcessError as e:
+        print(f"Error starting Flask server: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     install_dependencies()

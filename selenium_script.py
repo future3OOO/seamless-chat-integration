@@ -38,7 +38,7 @@ try:
 
     # Open the webpage containing the iframe
     logging.info("Navigating to the webpage...")
-    driver.get('http://localhost:8000/tapi.html')
+    driver.get('http://localhost:5000/tapi.html')
 
     # Wait for the iframe to be present and then switch to it
     logging.info("Waiting 30 seconds for the iframe to load...")

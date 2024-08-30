@@ -41,13 +41,20 @@ def submit():
         # Log the received data (for debugging)
         print(f"Received form data: {full_name}, {address}, {email}, {issue}")
         
-        # Call the Selenium script with the form data and optional image path
+        # Prepare the command to run the Selenium script
+        command = ['python', 'selenium_script.py', full_name, address, email, issue]
         if image_path:
-            subprocess.run(['python', 'selenium_script.py', full_name, address, email, issue, image_path])
+            command.append(image_path)
+        
+        # Run the Selenium script
+        result = subprocess.run(command, capture_output=True, text=True)
+        
+        # Check if the script ran successfully
+        if result.returncode == 0:
+            return jsonify({"message": "Form submitted successfully!", "script_output": result.stdout}), 200
         else:
-            subprocess.run(['python', 'selenium_script.py', full_name, address, email, issue])
+            return jsonify({"error": "Selenium script failed", "script_error": result.stderr}), 500
 
-        return jsonify({"message": "Form submitted successfully!"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

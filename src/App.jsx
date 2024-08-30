@@ -28,15 +28,25 @@ const App = () => {
     }
 
     try {
-      console.log('Form data:', Object.fromEntries(data));
-      alert('Form submitted successfully!');
-      setFormData({
-        full_name: '',
-        address: '',
-        email: '',
-        issue: '',
-        image: null
+      const response = await fetch('/submit', {
+        method: 'POST',
+        body: data,
       });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Server response:', result);
+        alert('Form submitted successfully!');
+        setFormData({
+          full_name: '',
+          address: '',
+          email: '',
+          issue: '',
+          image: null
+        });
+      } else {
+        throw new Error('Server response was not ok.');
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('Error submitting form. Please try again.');

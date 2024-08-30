@@ -21,6 +21,9 @@ image_path = None
 if len(sys.argv) > 5:
     image_path = sys.argv[5]
 
+# Print received arguments for debugging
+print(f"Received arguments: full_name={full_name}, address={address}, email={email}, issue={issue}, image_path={image_path}")
+
 # Set up Chrome options to run with a visible window
 options = webdriver.ChromeOptions()
 # options.add_argument('--headless')  # Uncomment this line to run in headless mode

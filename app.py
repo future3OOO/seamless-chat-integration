@@ -28,12 +28,15 @@ def serve(path):
     if path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
+    elif path == '':
+        logging.debug("Serving index.html for root path")
+        return send_from_directory(app.static_folder, 'index.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logging.debug(f"Serving index.html for path: {path}")
-        return send_from_directory(app.static_folder, 'index.html')
+        logging.debug(f"Path not found: {path}")
+        return "Not Found", 404
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -94,6 +97,20 @@ if __name__ == '__main__':
     tapi_html_dest = os.path.join(templates_folder, 'tapi.html')
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
         os.rename(tapi_html_src, tapi_html_dest)
+    
+    # Ensure the build folder exists
+    build_folder = os.path.join(current_dir, 'build')
+    if not os.path.exists(build_folder):
+        os.makedirs(build_folder)
+        logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
+    
+    # Copy index.html to the build folder if it doesn't exist
+    index_html_src = os.path.join(current_dir, 'public', 'index.html')
+    index_html_dest = os.path.join(build_folder, 'index.html')
+    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
+        import shutil
+        shutil.copy2(index_html_src, index_html_dest)
+        logging.info("Copied index.html to the build folder")
     
     port = 8000
     host = 'localhost'

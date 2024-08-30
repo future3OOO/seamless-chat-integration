@@ -14,7 +14,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, 
             static_folder=os.path.join(current_dir, 'build'),
             static_url_path='',
-            template_folder=os.path.join(current_dir, 'templates'))
+            template_folder=current_dir)  # Changed template_folder to current_dir
 CORS(app)  # Enable CORS for all routes
 
 # Set the upload folder path
@@ -27,13 +27,22 @@ def serve(path):
     logging.debug(f"Received request for path: {path}")
     if path == '' or path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
-        return render_template('tapi.html')
+        tapi_path = os.path.join(current_dir, 'tapi.html')
+        if os.path.exists(tapi_path):
+            return render_template('tapi.html')
+        else:
+            logging.error(f"tapi.html not found at {tapi_path}")
+            return "tapi.html not found", 404
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
         logging.debug("Path not found, returning 404")
         return "Not Found", 404
+
+# Add this at the end of the file
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8000)
 
 @app.route('/submit', methods=['POST'])
 def submit():

@@ -18,10 +18,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/<path:path>')
 def serve(path):
     logging.debug(f"Received request for path: {path}")
-    if path == 'tapi.html' or path == '':
+    if path == '' or path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
-    elif path != "" and os.path.exists(app.static_folder + '/' + path):
+    elif os.path.exists(app.static_folder + '/' + path):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:

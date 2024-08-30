@@ -3,26 +3,30 @@ import os
 import sys
 import shutil
 
+# Define the full paths to npm and node executables
+NPM_PATH = r"C:\Program Files\nodejs\npm.cmd"
+NODE_PATH = r"C:\Program Files\nodejs\node.exe"
+
 def check_npm():
     print("Checking if npm is installed...")
     try:
-        result = subprocess.run(["npm", "--version"], capture_output=True, text=True)
+        result = subprocess.run([NPM_PATH, "--version"], capture_output=True, text=True)
         npm_version = result.stdout.strip()
         print(f"npm version: {npm_version}")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print("npm is not found in the system PATH.")
+        print(f"npm is not found at {NPM_PATH}")
         return False
 
 def check_node():
     print("Checking if Node.js is installed...")
     try:
-        result = subprocess.run(["node", "--version"], capture_output=True, text=True)
+        result = subprocess.run([NODE_PATH, "--version"], capture_output=True, text=True)
         node_version = result.stdout.strip()
         print(f"Node.js version: {node_version}")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print("Node.js is not found in the system PATH.")
+        print(f"Node.js is not found at {NODE_PATH}")
         return False
 
 def install_dependencies():
@@ -38,14 +42,16 @@ def install_dependencies():
     
     if not check_npm() or not check_node():
         print("Error: Both npm and Node.js are required to build the React app.")
-        print("Please ensure both are installed and added to your system PATH.")
-        print("You can download Node.js (which includes npm) from: https://nodejs.org/")
+        print("Please ensure both are installed and the paths in this script are correct.")
+        print("Current paths:")
+        print(f"npm: {NPM_PATH}")
+        print(f"node: {NODE_PATH}")
         sys.exit(1)
     
     print("Checking Node.js dependencies...")
     if not os.path.exists('node_modules'):
         print("Installing Node.js dependencies...")
-        subprocess.check_call(["npm", "install"])
+        subprocess.check_call([NPM_PATH, "install"])
     else:
         print("Node.js dependencies already installed.")
     return True
@@ -53,7 +59,7 @@ def install_dependencies():
 def build_react_app():
     print("Building React app...")
     try:
-        subprocess.check_call(["npm", "run", "build"])
+        subprocess.check_call([NPM_PATH, "run", "build"])
         print("React app built successfully.")
         return True
     except subprocess.CalledProcessError:

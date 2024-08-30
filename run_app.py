@@ -4,13 +4,13 @@ import sys
 import shutil
 
 # Define the full paths to npm and node executables
-NPM_PATH = r"C:\Program Files\nodejs\npm.cmd"
+NPM_PATH = r"C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js"
 NODE_PATH = r"C:\Program Files\nodejs\node.exe"
 
 def check_npm():
     print("Checking if npm is installed...")
     try:
-        result = subprocess.run([NPM_PATH, "--version"], capture_output=True, text=True)
+        result = subprocess.run([NODE_PATH, NPM_PATH, "--version"], capture_output=True, text=True)
         npm_version = result.stdout.strip()
         print(f"npm version: {npm_version}")
         return True
@@ -51,7 +51,7 @@ def install_dependencies():
     print("Checking Node.js dependencies...")
     if not os.path.exists('node_modules'):
         print("Installing Node.js dependencies...")
-        subprocess.check_call([NPM_PATH, "install"])
+        subprocess.check_call([NODE_PATH, NPM_PATH, "install"])
     else:
         print("Node.js dependencies already installed.")
     return True
@@ -59,7 +59,7 @@ def install_dependencies():
 def build_react_app():
     print("Building React app...")
     try:
-        subprocess.check_call([NPM_PATH, "run", "build"])
+        subprocess.check_call([NODE_PATH, NPM_PATH, "run", "build"])
         print("React app built successfully.")
         return True
     except subprocess.CalledProcessError:

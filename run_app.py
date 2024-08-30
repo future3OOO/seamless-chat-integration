@@ -4,6 +4,7 @@ import sys
 import shutil
 
 def check_npm():
+    print("Checking if npm is installed...")
     try:
         subprocess.run(["npm", "--version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return True

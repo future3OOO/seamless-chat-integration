@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +8,16 @@ const App = () => {
     issue: '',
     image: null
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -19,6 +29,8 @@ const App = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
     const data = new FormData();
     for (const key in formData) {
       data.append(key, formData[key]);
@@ -41,14 +53,40 @@ const App = () => {
           issue: '',
           image: null
         });
+      } else if (response.status === 429) {
+        throw new Error('Too many requests. Please try again later.');
       } else {
         throw new Error('Server response was not ok.');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Error submitting form. Please try again.');
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-2xl font-bold text-gray-800">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Error</h2>
+          <p className="text-center text-gray-800">{error}</p>
+          <button onClick={() => setError(null)} className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -75,7 +113,9 @@ const App = () => {
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image</label>
             <input type="file" id="image" name="image" onChange={handleChange} accept="image/*" className="w-full" />
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Submit</button>
+          <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors" disabled={isLoading}>
+            {isLoading ? 'Submitting...' : 'Submit'}
+          </button>
         </form>
       </div>
     </div>

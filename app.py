@@ -28,12 +28,15 @@ def serve(path):
     if path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
+    elif path == '':
+        logging.debug("Serving index.html for root path")
+        return send_from_directory(app.static_folder, 'index.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logging.debug(f"Serving index.html for path: {path}")
-        return send_from_directory(app.static_folder, 'index.html')
+        logging.debug(f"Path not found: {path}")
+        return "Not Found", 404
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -95,8 +98,29 @@ if __name__ == '__main__':
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
         os.rename(tapi_html_src, tapi_html_dest)
     
+    # Ensure the build folder exists
+    build_folder = os.path.join(current_dir, 'build')
+    if not os.path.exists(build_folder):
+        os.makedirs(build_folder)
+        logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
+    
+    # Copy index.html to the build folder if it doesn't exist
+    index_html_src = os.path.join(current_dir, 'index.html')
+    index_html_dest = os.path.join(build_folder, 'index.html')
+    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
+        import shutil
+        shutil.copy2(index_html_src, index_html_dest)
+        logging.info("Copied index.html to the build folder")
+    
+    # Run npm run build to generate the assets
+    try:
+        subprocess.run(["npm", "run", "build"], check=True)
+        logging.info("Successfully built React app")
+    except subprocess.CalledProcessError:
+        logging.error("Failed to build React app. Make sure npm is installed and the build script is correct.")
+    
     port = 8000
-    host = '0.0.0.0'
+    host = 'localhost'
     logging.info(f"Starting Flask server on {host}:{port}")
     logging.info(f"Access the React app at: http://{host}:{port}")
     logging.info(f"Access the tapi.html page at: http://{host}:{port}/tapi.html")

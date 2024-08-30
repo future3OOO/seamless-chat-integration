@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import './App.css'
 
-const App = () => {
+function App() {
   const [formData, setFormData] = useState({
     full_name: '',
     address: '',
@@ -79,7 +80,7 @@ const App = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

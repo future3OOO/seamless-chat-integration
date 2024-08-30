@@ -12,7 +12,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Set up Flask app with explicit template and static folder paths
 app = Flask(__name__, 
-            static_folder=os.path.join(current_dir, 'build'),
+            static_folder=os.path.join(current_dir, 'public'),
             static_url_path='',
             template_folder=os.path.join(current_dir, 'templates'))
 CORS(app)  # Enable CORS for all routes
@@ -28,15 +28,15 @@ def serve(path):
     if path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
-    elif path == '':
-        logging.debug("Serving index.html for root path")
-        return send_from_directory(app.static_folder, 'index.html')
+    elif path == '' or path == 'index.html':
+        logging.debug("Serving index.html")
+        return send_from_directory('public', 'index.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
         logging.debug(f"Path not found: {path}")
-        return "Not Found", 404
+        return send_from_directory('public', 'index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -104,13 +104,12 @@ if __name__ == '__main__':
         os.makedirs(build_folder)
         logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
     
-    # Copy index.html to the build folder if it doesn't exist
-    index_html_src = os.path.join(current_dir, 'index.html')
-    index_html_dest = os.path.join(build_folder, 'index.html')
-    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
-        import shutil
-        shutil.copy2(index_html_src, index_html_dest)
-        logging.info("Copied index.html to the build folder")
+    # Ensure index.html exists in the public folder
+    index_html_path = os.path.join(current_dir, 'public', 'index.html')
+    if not os.path.exists(index_html_path):
+        logging.error("index.html not found in the public folder. Please ensure it exists.")
+    else:
+        logging.info("index.html found in the public folder")
     
     # Run npm run build to generate the assets
     try:

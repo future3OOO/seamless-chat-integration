@@ -7,11 +7,18 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-app = Flask(__name__, static_folder='build', static_url_path='', template_folder='templates')
+# Get the absolute path of the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Set up Flask app with explicit template and static folder paths
+app = Flask(__name__, 
+            static_folder=os.path.join(current_dir, 'build'),
+            static_url_path='',
+            template_folder=os.path.join(current_dir, 'templates'))
 CORS(app)  # Enable CORS for all routes
 
 # Set the upload folder path
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', defaults={'path': ''})
@@ -21,7 +28,7 @@ def serve(path):
     if path == '' or path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
-    elif os.path.exists(app.static_folder + '/' + path):
+    elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
@@ -78,12 +85,15 @@ if __name__ == '__main__':
         os.makedirs(UPLOAD_FOLDER)
     
     # Create the templates folder if it doesn't exist
-    if not os.path.exists('templates'):
-        os.makedirs('templates')
+    templates_folder = os.path.join(current_dir, 'templates')
+    if not os.path.exists(templates_folder):
+        os.makedirs(templates_folder)
     
     # Move tapi.html to templates folder if it's not already there
-    if os.path.exists('tapi.html') and not os.path.exists('templates/tapi.html'):
-        os.rename('tapi.html', 'templates/tapi.html')
+    tapi_html_src = os.path.join(current_dir, 'tapi.html')
+    tapi_html_dest = os.path.join(templates_folder, 'tapi.html')
+    if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
+        os.rename(tapi_html_src, tapi_html_dest)
     
     logging.info("Starting Flask server on port 8000")
     app.run(debug=True, host='0.0.0.0', port=8000)

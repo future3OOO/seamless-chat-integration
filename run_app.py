@@ -3,11 +3,21 @@ import os
 import sys
 
 def install_dependencies():
-    print("Installing Python dependencies...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "flask", "flask-cors", "selenium"])
+    print("Checking Python dependencies...")
+    try:
+        import flask
+        import flask_cors
+        import selenium
+    except ImportError:
+        print("Installing missing Python dependencies...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "flask", "flask-cors", "selenium"])
     
-    print("Installing Node.js dependencies...")
-    subprocess.check_call(["npm", "install"])
+    print("Checking Node.js dependencies...")
+    if not os.path.exists('node_modules'):
+        print("Installing Node.js dependencies...")
+        subprocess.check_call(["npm", "install"])
+    else:
+        print("Node.js dependencies already installed.")
 
 def build_react_app():
     print("Building React app...")

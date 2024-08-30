@@ -7,7 +7,7 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-app = Flask(__name__, static_folder='build', static_url_path='')
+app = Flask(__name__, static_folder='build', static_url_path='', template_folder='templates')
 CORS(app)  # Enable CORS for all routes
 
 # Set the upload folder path
@@ -76,6 +76,14 @@ if __name__ == '__main__':
     # Create the upload folder if it doesn't exist
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
+    
+    # Create the templates folder if it doesn't exist
+    if not os.path.exists('templates'):
+        os.makedirs('templates')
+    
+    # Move tapi.html to templates folder if it's not already there
+    if os.path.exists('tapi.html') and not os.path.exists('templates/tapi.html'):
+        os.rename('tapi.html', 'templates/tapi.html')
     
     logging.info("Starting Flask server on port 8000")
     app.run(debug=True, host='0.0.0.0', port=8000)

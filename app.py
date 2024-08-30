@@ -18,15 +18,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/<path:path>')
 def serve(path):
     logging.debug(f"Received request for path: {path}")
-    if path == 'tapi.html':
+    if path == 'tapi.html' or path == '':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
     elif path != "" and os.path.exists(app.static_folder + '/' + path):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logging.debug("Serving index.html")
-        return send_from_directory(app.static_folder, 'index.html')
+        logging.debug("Path not found, returning 404")
+        return "Not Found", 404
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -77,5 +77,5 @@ if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     
-    logging.info("Starting Flask server")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    logging.info("Starting Flask server on port 8000")
+    app.run(debug=True, host='0.0.0.0', port=8000)

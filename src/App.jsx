@@ -82,4 +82,13 @@ const App = () => {
   );
 };
 
+// Note: This comment is to demonstrate the changes needed in package.json
+// Add the following scripts to package.json:
+// "scripts": {
+//   "dev": "vite",
+//   "build": "vite build",
+//   "build:dev": "vite build --mode development",
+//   "preview": "vite preview"
+// }
+
 export default App;

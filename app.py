@@ -25,7 +25,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/<path:path>')
 def serve(path):
     logging.debug(f"Received request for path: {path}")
-    if path == '' or path == 'tapi.html':
+    if path == 'tapi.html':
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):

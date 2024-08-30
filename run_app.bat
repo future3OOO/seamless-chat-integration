@@ -1,0 +1,13 @@
+@echo off
+echo Installing Python dependencies...
+python -m pip install flask flask-cors selenium
+
+echo Installing Node.js dependencies...
+npm install
+
+echo Building React app...
+npm run build
+
+echo Starting Flask server...
+python app.py
+pause

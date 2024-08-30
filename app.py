@@ -3,16 +3,20 @@ from flask_cors import CORS
 import subprocess
 import os
 
-app = Flask(__name__, static_folder='public')
+app = Flask(__name__, static_folder='build', static_url_path='')
 CORS(app)  # Enable CORS for all routes
 
 # Set the upload folder path
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/')
-def index():
-    return send_from_directory(app.static_folder, 'index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():

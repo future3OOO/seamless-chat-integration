@@ -30,14 +30,14 @@ def serve(path):
         logging.debug("Rendering tapi.html template")
         return render_template('tapi.html')
     elif path == '' or path == 'index.html':
-        logging.debug("Serving index.html from build folder")
-        return send_from_directory('build', 'index.html')
+        logging.debug("Serving index.html from public folder")
+        return send_from_directory(app.static_folder, 'index.html')
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        logging.debug(f"Path not found: {path}, serving index.html from build folder")
-        return send_from_directory('build', 'index.html')
+        logging.debug(f"Path not found: {path}, serving index.html from public folder")
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():

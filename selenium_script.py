@@ -43,6 +43,9 @@ try:
     logging.info("Navigating to the webpage...")
     driver.get('http://localhost:5000/tapi.html')
 
+    # Print received arguments for debugging
+    print(f"Received arguments: full_name={full_name}, address={address}, email={email}, issue={issue}, image_path={image_path}")
+
     # Wait for the iframe to be present and then switch to it
     logging.info("Waiting 30 seconds for the iframe to load...")
     time.sleep(30)  # Adjust the wait time as needed

@@ -36,7 +36,7 @@ const App = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Server response:', result);
-        alert('Form submitted successfully!');
+        alert('Form submitted successfully! Selenium script is now processing.');
         setFormData({
           full_name: '',
           address: '',

@@ -96,7 +96,7 @@ if __name__ == '__main__':
         os.rename(tapi_html_src, tapi_html_dest)
     
     port = 8000
-    host = 'localhost'
+    host = '0.0.0.0'
     logging.info(f"Starting Flask server on {host}:{port}")
     logging.info(f"Access the React app at: http://{host}:{port}")
     logging.info(f"Access the tapi.html page at: http://{host}:{port}/tapi.html")

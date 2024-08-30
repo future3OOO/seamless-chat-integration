@@ -95,5 +95,8 @@ if __name__ == '__main__':
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
         os.rename(tapi_html_src, tapi_html_dest)
     
-    logging.info("Starting Flask server on port 8000")
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    port = 8000
+    logging.info(f"Starting Flask server on port {port}")
+    logging.info(f"Access the React app at: http://localhost:{port}")
+    logging.info(f"Access the tapi.html page at: http://localhost:{port}/tapi.html")
+    app.run(debug=True, host='0.0.0.0', port=port)

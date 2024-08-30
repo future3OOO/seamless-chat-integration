@@ -7,10 +7,22 @@ def check_npm():
     print("Checking if npm is installed...")
     try:
         result = subprocess.run(["npm", "--version"], capture_output=True, text=True)
-        print(f"npm version: {result.stdout.strip()}")
+        npm_version = result.stdout.strip()
+        print(f"npm version: {npm_version}")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print("npm is not installed or not in the system PATH.")
+        print("npm is not found in the system PATH.")
+        return False
+
+def check_node():
+    print("Checking if Node.js is installed...")
+    try:
+        result = subprocess.run(["node", "--version"], capture_output=True, text=True)
+        node_version = result.stdout.strip()
+        print(f"Node.js version: {node_version}")
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("Node.js is not found in the system PATH.")
         return False
 
 def install_dependencies():
@@ -24,10 +36,10 @@ def install_dependencies():
         print("Installing missing Python dependencies...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", "flask", "flask-cors", "selenium"])
     
-    if not check_npm():
-        print("Error: npm is required to build the React app.")
-        print("Please install Node.js and npm, then add them to your system PATH.")
-        print("You can download Node.js from: https://nodejs.org/")
+    if not check_npm() or not check_node():
+        print("Error: Both npm and Node.js are required to build the React app.")
+        print("Please ensure both are installed and added to your system PATH.")
+        print("You can download Node.js (which includes npm) from: https://nodejs.org/")
         sys.exit(1)
     
     print("Checking Node.js dependencies...")

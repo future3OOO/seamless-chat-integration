@@ -1,5 +1,10 @@
-// This file can be used for any global setup or exports
-// For now, we'll leave it empty as the main entry point is main.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
 
-// If you need to export anything in the future, you can do it here:
-// export { someFunction } from './someModule';
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

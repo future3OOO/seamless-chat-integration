@@ -44,27 +44,17 @@ def submit():
     try:
         # Get form data
         data = request.json
+        logging.debug(f"Received data: {data}")
         full_name = data.get('full_name')
         address = data.get('address')
         email = data.get('email')
         issue = data.get('issue')
         
-        # Handle file upload (if implemented)
-        # image_file = request.files.get('image')
-        # image_path = None
-        # if image_file:
-        #     image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
-        #     image_file.save(image_path)
-        #     image_path = os.path.abspath(image_path)
-        #     logging.debug(f"Image file saved at: {image_path}")
-        
         # Log the received data (for debugging)
-        logging.debug(f"Received form data: {full_name}, {address}, {email}, {issue}")
+        logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
-        # if image_path:
-        #     command.append(image_path)
         
         logging.debug(f"Executing command: {' '.join(command)}")
         
@@ -78,7 +68,6 @@ def submit():
         logging.exception("An error occurred while processing the form submission")
         return jsonify({"error": str(e)}), 400
 
-# Add a route for OPTIONS request to handle CORS preflight
 @app.route('/submit', methods=['OPTIONS'])
 def handle_options():
     response = app.make_default_options_response()
@@ -87,41 +76,26 @@ def handle_options():
     return response
 
 if __name__ == '__main__':
-    # Create the upload folder if it doesn't exist
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+    # Create necessary folders
+    for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            logging.info(f"Created folder: {folder}")
     
-    # Create the templates folder if it doesn't exist
-    templates_folder = os.path.join(current_dir, 'templates')
-    if not os.path.exists(templates_folder):
-        os.makedirs(templates_folder)
-    
-    # Move tapi.html to templates folder if it's not already there
+    # Move tapi.html to templates folder if needed
     tapi_html_src = os.path.join(current_dir, 'tapi.html')
-    tapi_html_dest = os.path.join(templates_folder, 'tapi.html')
+    tapi_html_dest = os.path.join(current_dir, 'templates', 'tapi.html')
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
         os.rename(tapi_html_src, tapi_html_dest)
+        logging.info("Moved tapi.html to templates folder")
     
-    # Ensure the build folder exists
-    build_folder = os.path.join(current_dir, 'build')
-    if not os.path.exists(build_folder):
-        os.makedirs(build_folder)
-        logging.warning("Build folder not found. Created an empty one. Make sure to build your React app.")
-    
-    # Copy index.html to the build folder if it doesn't exist
+    # Copy index.html to the build folder if needed
     index_html_src = os.path.join(current_dir, 'index.html')
-    index_html_dest = os.path.join(build_folder, 'index.html')
+    index_html_dest = os.path.join(current_dir, 'build', 'index.html')
     if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
         import shutil
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
-    
-    # Run npm run build to generate the assets
-    try:
-        subprocess.run(["npm", "run", "build"], check=True)
-        logging.info("Successfully built React app")
-    except subprocess.CalledProcessError:
-        logging.error("Failed to build React app. Make sure npm is installed and the build script is correct.")
     
     port = 8000
     host = 'localhost'

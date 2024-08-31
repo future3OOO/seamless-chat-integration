@@ -9,14 +9,14 @@ const App = () => {
     issue: '',
     image: null
   });
-
-  // Add this useEffect hook to log when the component mounts
-  useEffect(() => {
-    console.log('App component mounted');
-  }, []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [logoError, setLogoError] = useState(false);
+
+  useEffect(() => {
+    console.log('App component mounted');
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -53,7 +53,6 @@ const App = () => {
           issue: '',
           image: null
         });
-        // Open tapi.html in a new window
         window.open('http://localhost:5000/tapi.html', '_blank');
       } else {
         const errorText = await response.text();
@@ -90,10 +89,23 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img src={Logo} alt="MW Logo" className="w-32 h-32 mx-auto object-cover" />
+          {!logoError ? (
+            <img
+              src={Logo}
+              alt="MW Logo"
+              className="w-32 h-32 mx-auto object-contain"
+              onError={() => {
+                console.error('Failed to load logo');
+                setLogoError(true);
+              }}
+            />
+          ) : (
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
+              Logo not found
+            </div>
+          )}
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
-        {/* Add this paragraph for additional information */}
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

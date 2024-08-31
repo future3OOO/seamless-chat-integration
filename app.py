@@ -44,9 +44,28 @@ def serve(path):
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
+    elif os.path.exists(os.path.join(current_dir, 'templates', path)):
+        logging.debug(f"Serving file from templates folder: {path}")
+        return send_from_directory(os.path.join(current_dir, 'templates'), path)
     else:
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
+
+# Add a specific route for tapi.html
+@app.route('/tapi.html')
+def serve_tapi():
+    logging.debug("Serving tapi.html from templates folder")
+    return render_template('tapi.html')
+
+if __name__ == '__main__':
+    setup_folders_and_files()
+    
+    port = 5000
+    host = '0.0.0.0'
+    logging.info(f"Starting Flask server on {host}:{port}")
+    logging.info(f"Access the React app at: http://localhost:{port}")
+    logging.info(f"Access the tapi.html page at: http://localhost:{port}/tapi.html")
+    app.run(debug=True, host=host, port=port)
 
 @app.route('/submit', methods=['POST'])
 def submit():

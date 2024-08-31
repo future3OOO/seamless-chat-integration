@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import FallbackLogo from './assets/logo.svg';
-import mwLogo from './assets/new form logo PP.svg';
+import React, { useState } from 'react';
+import Logo from './assets/logo.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -12,25 +11,6 @@ const App = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [logoSrc, setLogoSrc] = useState(mwLogo);
-
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      console.log("MW logo loaded successfully");
-      setLogoSrc(mwLogo);
-    };
-    img.onerror = (e) => {
-      console.error("Failed to load MW logo:", e);
-      setLogoSrc(FallbackLogo);
-    };
-    img.src = mwLogo;
-  }, []);
-
-  useEffect(() => {
-    console.log("Current logo source:", logoSrc);
-  }, [logoSrc]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -104,14 +84,9 @@ const App = () => {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
           <img
-            src={logoSrc}
-            alt="MW Logo"
+            src={Logo}
+            alt="Logo"
             className="w-32 h-32 mx-auto object-contain"
-            onError={(e) => {
-              console.error("Error loading image:", e);
-              console.log("Failed src:", e.target.src);
-              e.target.src = FallbackLogo;
-            }}
           />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>

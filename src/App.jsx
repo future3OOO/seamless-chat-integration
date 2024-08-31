@@ -15,28 +15,30 @@ const App = () => {
 
   useEffect(() => {
     const loadLogo = async () => {
-      try {
-        const newFormLogo = new URL('/src/assets/new form logo PP.svg', import.meta.url).href;
-        const img = new Image();
-        img.onload = () => {
-          console.log("New form logo loaded successfully");
-          setLogoSrc(newFormLogo);
-        };
-        img.onerror = () => {
-          throw new Error("Failed to load new form logo");
-        };
-        img.src = newFormLogo;
-      } catch (error) {
-        console.error("Error loading new form logo:", error);
+      const logos = [
+        '/assets/new form logo PP.svg',
+        '/assets/logo.svg',
+        '/src/assets/new form logo PP.svg',
+        '/src/assets/logo.svg'
+      ];
+
+      for (const logo of logos) {
         try {
-          const fallbackLogo = new URL('/src/assets/logo.svg', import.meta.url).href;
-          setLogoSrc(fallbackLogo);
-        } catch (fallbackError) {
-          console.error("Error loading fallback logo:", fallbackError);
-          setLogoSrc(null);
+          const response = await fetch(logo);
+          if (response.ok) {
+            setLogoSrc(logo);
+            console.log("Logo loaded successfully:", logo);
+            return;
+          }
+        } catch (error) {
+          console.error("Error loading logo:", logo, error);
         }
       }
+
+      console.error("Failed to load any logo");
+      setLogoSrc(null);
     };
+
     loadLogo();
   }, []);
 
@@ -122,7 +124,7 @@ const App = () => {
               className="w-32 h-32 mx-auto object-contain"
               onError={(e) => {
                 console.error("Error loading image:", e);
-                e.target.src = new URL('/src/assets/logo.svg', import.meta.url).href;
+                setLogoSrc(null);
               }}
             />
           ) : (

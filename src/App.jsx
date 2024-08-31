@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
 
-// Dynamic imports for logo files
-const logoImports = {
-  png: () => import('./assets/mw-logo.png').catch(() => null),
-  jpg: () => import('./assets/mw-logo.jpg').catch(() => null),
-  svg: () => import('./assets/mw-logo.svg').catch(() => null),
-};
-
 const App = () => {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -20,24 +13,18 @@ const App = () => {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [logoError, setLogoError] = useState(false);
-  const [logoSrc, setLogoSrc] = useState(Logo);
+  const [logoSrc, setLogoSrc] = useState(FallbackLogo);
 
   useEffect(() => {
     const loadLogo = async () => {
-      for (const format of ['png', 'jpg', 'svg']) {
-        try {
-          const module = await logoImports[format]();
-          if (module) {
-            setLogoSrc(module.default);
-            return;
-          }
-        } catch (error) {
-          console.error(`Failed to load ${format} logo:`, error);
-        }
+      try {
+        const logoModule = await import('./assets/mw-logo.png');
+        setLogoSrc(logoModule.default);
+      } catch (error) {
+        console.error('Failed to load PNG logo, using fallback:', error);
+        setLogoSrc(FallbackLogo);
+        setLogoError(true);
       }
-      console.error('Failed to load all logo formats, using fallback');
-      setLogoSrc(FallbackLogo);
-      setLogoError(true);
     };
 
     loadLogo();

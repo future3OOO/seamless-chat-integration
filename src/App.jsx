@@ -16,27 +16,39 @@ const App = () => {
 
   useEffect(() => {
     const loadLogo = async () => {
-      try {
-        const MWLogo = (await import('./assets/new form logo PP.svg')).default;
-        const img = new Image();
-        img.onload = () => {
-          console.log("MW logo loaded successfully");
-          setLogoSrc(MWLogo);
-        };
-        img.onerror = (e) => {
-          console.error("Failed to load MW logo:", e);
-          console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
-          setLogoSrc(FallbackLogo);
-        };
-        img.src = MWLogo;
-        console.log("Attempting to load MW logo from:", MWLogo);
-      } catch (error) {
-        console.error("Error importing logo:", error);
-        setLogoSrc(FallbackLogo);
+      const logoOptions = [
+        './assets/new form logo PP.svg',
+        './assets/mw-logo.png',
+        './assets/logo.svg'
+      ];
+
+      for (const logoPath of logoOptions) {
+        try {
+          const logoModule = await import(/* @vite-ignore */ logoPath);
+          const img = new Image();
+          img.onload = () => {
+            console.log(`Logo loaded successfully from: ${logoPath}`);
+            setLogoSrc(logoModule.default);
+          };
+          img.onerror = (e) => {
+            console.error(`Failed to load logo from: ${logoPath}`, e);
+          };
+          img.src = logoModule.default;
+          break; // Exit the loop if a logo is successfully loaded
+        } catch (error) {
+          console.error(`Error importing logo from ${logoPath}:`, error);
+        }
       }
     };
 
     loadLogo();
+
+    // Cleanup function
+    return () => {
+      if (logoSrc !== FallbackLogo) {
+        URL.revokeObjectURL(logoSrc);
+      }
+    };
   }, []);
 
   useEffect(() => {

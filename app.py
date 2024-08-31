@@ -22,6 +22,11 @@ CORS(app)  # Enable CORS for all routes
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'build'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
@@ -108,8 +113,8 @@ if __name__ == '__main__':
         logging.info("Copied index.html to the build folder")
     
     port = 5000
-    host = 'localhost'
+    host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access
     logging.info(f"Starting Flask server on {host}:{port}")
-    logging.info(f"Access the React app at: http://{host}:{port}")
-    logging.info(f"Access the tapi.html page at: http://{host}:{port}/tapi.html")
+    logging.info(f"Access the React app at: http://localhost:{port}")
+    logging.info(f"Access the tapi.html page at: http://localhost:{port}/tapi.html")
     app.run(debug=True, host=host, port=port)

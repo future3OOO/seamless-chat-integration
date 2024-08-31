@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
 
+const logoImports = {
+  png: () => import('./assets/mw-logo.png').then(module => module.default).catch(() => null),
+  svg: () => import('./assets/logo.svg').then(module => module.default).catch(() => null),
+};
+
 const App = () => {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -12,18 +17,16 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [logoError, setLogoError] = useState(false);
   const [logoSrc, setLogoSrc] = useState(FallbackLogo);
 
   useEffect(() => {
     const loadLogo = async () => {
-      try {
-        const logoModule = await import('./assets/mw-logo.png');
-        setLogoSrc(logoModule.default);
-      } catch (error) {
-        console.error('Failed to load PNG logo, using fallback:', error);
-        setLogoSrc(FallbackLogo);
-        setLogoError(true);
+      const pngLogo = await logoImports.png();
+      if (pngLogo) {
+        setLogoSrc(pngLogo);
+      } else {
+        const svgLogo = await logoImports.svg();
+        setLogoSrc(svgLogo || FallbackLogo);
       }
     };
 
@@ -105,15 +108,7 @@ const App = () => {
             src={logoSrc}
             alt="MW Logo"
             className="w-32 h-32 mx-auto object-contain"
-            onError={(e) => {
-              console.error('Failed to load logo:', e);
-              setLogoSrc(FallbackLogo);
-              setLogoError(true);
-            }}
           />
-          {logoError && (
-            <p className="text-sm text-red-500 mt-2">Primary logo not found, using fallback</p>
-          )}
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>

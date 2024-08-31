@@ -93,7 +93,7 @@ def handle_options():
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-if __name__ == '__main__':
+def setup_folders_and_files():
     # Create necessary folders
     for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
         if not os.path.exists(folder):
@@ -122,6 +122,9 @@ if __name__ == '__main__':
         import shutil
         shutil.copy2(favicon_src, favicon_dest)
         logging.info("Copied favicon.ico to the build folder")
+
+if __name__ == '__main__':
+    setup_folders_and_files()
     
     port = 5000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access

@@ -30,7 +30,7 @@ const App = () => {
     }
 
     try {
-      const response = await fetchWithRetry('/submit', {
+      const response = await fetchWithRetry('http://localhost:8000/submit', {
         method: 'POST',
         body: data,
       });
@@ -47,7 +47,7 @@ const App = () => {
           image: null
         });
         // Open tapi.html in a new window
-        window.open('/tapi.html', '_blank');
+        window.open('http://localhost:8000/tapi.html', '_blank');
       } else {
         throw new Error('Server response was not ok.');
       }

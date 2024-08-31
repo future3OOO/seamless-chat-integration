@@ -112,7 +112,7 @@ const App = () => {
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image</label>
             <input type="file" id="image" name="image" onChange={handleChange} accept="image/*" className="w-full" />
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors" disabled={isLoading}>
+          <button type="submit" className="w-full bg-[#3582a1] text-white px-4 py-2 rounded hover:bg-[#2a6a84] transition-colors" disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Submit'}
           </button>
         </form>

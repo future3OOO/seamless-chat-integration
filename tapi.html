@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tapi Bot Test</title>
+</head>
+<body>
+    <h1>Tapi Bot Test Page</h1>
+    <!-- Embedded iframe code -->
+    <div class="tapi-embedded-request" data-company="31b929db-5a73-412b-81ea-c1f4fcf4fc4e" data-type="bot"></div>
+    <script>
+      (function(d, id){
+        if (d.getElementById(id)) return;
+        var js = d.createElement('script');
+        js.id = id;
+        js.src = '//tapi.app/js/embed.js';
+        d.head.appendChild(js);
+      })(document, 'tapi-embed-js');
+    </script>
+</body>
+</html>

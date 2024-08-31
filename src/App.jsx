@@ -48,7 +48,8 @@ const App = () => {
           issue: '',
           image: null
         });
-        setIsSubmitted(true);
+         // Open tapi.html in a new window
+         window.open('http://localhost:5000/tapi.html', '_blank');
       } else {
         const errorText = await response.text();
         throw new Error(`Server response was not ok. Status: ${response.status}, Message: ${errorText}`);

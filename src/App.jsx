@@ -89,7 +89,7 @@ const App = () => {
             className="w-32 h-32 mx-auto object-contain"
           />
         </div>
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Tenant maintenance request</h2>
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

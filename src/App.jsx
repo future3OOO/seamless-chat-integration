@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
+import mwLogo from './assets/new form logo PP.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -12,43 +13,19 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [logoSrc, setLogoSrc] = useState(FallbackLogo);
+  const [logoSrc, setLogoSrc] = useState(mwLogo);
 
   useEffect(() => {
-    const loadLogo = async () => {
-      const logoOptions = [
-        './assets/new form logo PP.svg',
-        './assets/mw-logo.png',
-        './assets/logo.svg'
-      ];
-
-      for (const logoPath of logoOptions) {
-        try {
-          const logoModule = await import(/* @vite-ignore */ logoPath);
-          const img = new Image();
-          img.onload = () => {
-            console.log(`Logo loaded successfully from: ${logoPath}`);
-            setLogoSrc(logoModule.default);
-          };
-          img.onerror = (e) => {
-            console.error(`Failed to load logo from: ${logoPath}`, e);
-          };
-          img.src = logoModule.default;
-          break; // Exit the loop if a logo is successfully loaded
-        } catch (error) {
-          console.error(`Error importing logo from ${logoPath}:`, error);
-        }
-      }
+    const img = new Image();
+    img.onload = () => {
+      console.log("MW logo loaded successfully");
+      setLogoSrc(mwLogo);
     };
-
-    loadLogo();
-
-    // Cleanup function
-    return () => {
-      if (logoSrc !== FallbackLogo) {
-        URL.revokeObjectURL(logoSrc);
-      }
+    img.onerror = (e) => {
+      console.error("Failed to load MW logo:", e);
+      setLogoSrc(FallbackLogo);
     };
+    img.src = mwLogo;
   }, []);
 
   useEffect(() => {

@@ -26,13 +26,14 @@ const App = () => {
     setError(null);
 
     try {
-      const response = await fetchWithRetry('http://localhost:8000/submit', {
+      const formDataToSend = new FormData();
+      for (const key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
+      const response = await fetchWithRetry('http://localhost:5000/submit', {
         method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        body: formDataToSend,
       });
 
       if (response.ok) {
@@ -47,9 +48,10 @@ const App = () => {
           image: null
         });
         // Open tapi.html in a new window
-        window.open('http://localhost:8000/tapi.html', '_blank');
+        window.open('http://localhost:5000/tapi.html', '_blank');
       } else {
-        throw new Error('Server response was not ok.');
+        const errorText = await response.text();
+        throw new Error(`Server response was not ok. Status: ${response.status}, Message: ${errorText}`);
       }
     } catch (error) {
       console.error('Error submitting form:', error);

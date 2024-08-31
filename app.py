@@ -43,18 +43,27 @@ def submit():
     logging.debug("Received POST request to /submit")
     try:
         # Get form data
-        data = request.json
-        logging.debug(f"Received data: {data}")
-        full_name = data.get('full_name')
-        address = data.get('address')
-        email = data.get('email')
-        issue = data.get('issue')
+        full_name = request.form.get('full_name')
+        address = request.form.get('address')
+        email = request.form.get('email')
+        issue = request.form.get('issue')
+        image = request.files.get('image')
         
         # Log the received data (for debugging)
         logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
+        if image:
+            logging.debug(f"Image received: {image.filename}")
+        
+        # Save the image if it exists
+        image_path = None
+        if image:
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+            image.save(image_path)
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
+        if image_path:
+            command.append(image_path)
         
         logging.debug(f"Executing command: {' '.join(command)}")
         

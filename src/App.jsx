@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Logo from './assets/logo.svg';
+import Logo from '/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -85,7 +85,7 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img src={Logo} alt="Company Logo" className="w-32 h-auto" />
+          <img src={Logo} alt="MW Logo" className="w-32 h-32 mx-auto object-cover" />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

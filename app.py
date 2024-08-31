@@ -43,27 +43,28 @@ def submit():
     logging.debug("Received POST request to /submit")
     try:
         # Get form data
-        full_name = request.form['full_name']
-        address = request.form['address']
-        email = request.form['email']
-        issue = request.form['issue']
+        data = request.json
+        full_name = data.get('full_name')
+        address = data.get('address')
+        email = data.get('email')
+        issue = data.get('issue')
         
-        # Handle file upload
-        image_file = request.files.get('image')
-        image_path = None
-        if image_file:
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
-            image_file.save(image_path)
-            image_path = os.path.abspath(image_path)  # Convert to absolute path
-            logging.debug(f"Image file saved at: {image_path}")
+        # Handle file upload (if implemented)
+        # image_file = request.files.get('image')
+        # image_path = None
+        # if image_file:
+        #     image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
+        #     image_file.save(image_path)
+        #     image_path = os.path.abspath(image_path)
+        #     logging.debug(f"Image file saved at: {image_path}")
         
         # Log the received data (for debugging)
         logging.debug(f"Received form data: {full_name}, {address}, {email}, {issue}")
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
-        if image_path:
-            command.append(image_path)
+        # if image_path:
+        #     command.append(image_path)
         
         logging.debug(f"Executing command: {' '.join(command)}")
         
@@ -76,6 +77,14 @@ def submit():
     except Exception as e:
         logging.exception("An error occurred while processing the form submission")
         return jsonify({"error": str(e)}), 400
+
+# Add a route for OPTIONS request to handle CORS preflight
+@app.route('/submit', methods=['OPTIONS'])
+def handle_options():
+    response = app.make_default_options_response()
+    response.headers['Access-Control-Allow-Methods'] = 'POST'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
 
 if __name__ == '__main__':
     # Create the upload folder if it doesn't exist

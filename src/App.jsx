@@ -24,16 +24,13 @@ const App = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    const data = new FormData();
-    for (const key in formData) {
-      data.append(key, formData[key]);
-    }
 
     try {
       const response = await fetchWithRetry('http://localhost:8000/submit', {
         method: 'POST',
-        body: data,
+        body: JSON.stringify(formData),
         headers: {
+          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       });

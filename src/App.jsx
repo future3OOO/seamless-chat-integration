@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import FallbackLogo from './assets/logo.svg';
+import MWLogo from './assets/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -11,49 +13,21 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [logoSrc, setLogoSrc] = useState(null);
+  const [logoSrc, setLogoSrc] = useState(FallbackLogo);
 
   useEffect(() => {
-    const loadLogo = async () => {
-      const logos = [
-        '/assets/new form logo PP.svg',
-        '/assets/logo.svg',
-        '/src/assets/new form logo PP.svg',
-        '/src/assets/logo.svg',
-        '/logo.svg',
-        '/mw-logo.png'
-      ];
-
-      for (const logo of logos) {
-        try {
-          console.log("Attempting to load logo from:", logo);
-          const response = await fetch(logo);
-          if (response.ok) {
-            const blob = await response.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            setLogoSrc(objectUrl);
-            console.log("Logo loaded successfully:", logo);
-            return;
-          } else {
-            console.log("Logo not found at:", logo);
-          }
-        } catch (error) {
-          console.error("Error loading logo:", logo, error);
-        }
-      }
-
-      console.error("Failed to load any logo");
-      setLogoSrc(null);
+    const img = new Image();
+    img.onload = () => {
+      console.log("MW logo loaded successfully");
+      setLogoSrc(MWLogo);
     };
-
-    loadLogo();
-
-    // Cleanup function to revoke object URL
-    return () => {
-      if (logoSrc) {
-        URL.revokeObjectURL(logoSrc);
-      }
+    img.onerror = (e) => {
+      console.error("Failed to load MW logo:", e);
+      console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
+      setLogoSrc(FallbackLogo);
     };
+    img.src = MWLogo;
+    console.log("Attempting to load MW logo from:", MWLogo);
   }, []);
 
   useEffect(() => {
@@ -131,21 +105,16 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          {logoSrc ? (
-            <img
-              src={logoSrc}
-              alt="Form Logo"
-              className="w-32 h-32 mx-auto object-contain"
-              onError={(e) => {
-                console.error("Error loading image:", e);
-                setLogoSrc(null);
-              }}
-            />
-          ) : (
-            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
-              Logo not available
-            </div>
-          )}
+          <img
+            src={logoSrc}
+            alt="MW Logo"
+            className="w-32 h-32 mx-auto object-contain"
+            onError={(e) => {
+              console.error("Error loading image:", e);
+              console.log("Failed src:", e.target.src);
+              e.target.src = FallbackLogo;
+            }}
+          />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>

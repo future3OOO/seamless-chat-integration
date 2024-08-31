@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import NewFormLogo from './assets/new form logo PP.svg';
-import FallbackLogo from './assets/logo.svg';
+import NewFormLogo from '/src/assets/new form logo PP.svg';
+import FallbackLogo from '/src/assets/logo.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -16,18 +16,18 @@ const App = () => {
   const [logoSrc, setLogoSrc] = useState(NewFormLogo);
 
   useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      console.log("New form logo loaded successfully");
-      setLogoSrc(NewFormLogo);
+    const loadLogo = async () => {
+      try {
+        const logoModule = await import('/src/assets/new form logo PP.svg');
+        console.log("New form logo loaded successfully");
+        setLogoSrc(logoModule.default);
+      } catch (error) {
+        console.error("Failed to load new form logo:", error);
+        const fallbackModule = await import('/src/assets/logo.svg');
+        setLogoSrc(fallbackModule.default);
+      }
     };
-    img.onerror = (e) => {
-      console.error("Failed to load new form logo:", e);
-      console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
-      setLogoSrc(FallbackLogo);
-    };
-    img.src = NewFormLogo;
-    console.log("Attempting to load new form logo from:", NewFormLogo);
+    loadLogo();
   }, []);
 
   useEffect(() => {
@@ -107,13 +107,8 @@ const App = () => {
         <div className="flex justify-center mb-6">
           <img
             src={logoSrc}
-            alt="New Form Logo"
+            alt="Form Logo"
             className="w-32 h-32 mx-auto object-contain"
-            onError={(e) => {
-              console.error("Error loading image:", e);
-              console.log("Failed src:", e.target.src);
-              e.target.src = FallbackLogo;
-            }}
           />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>

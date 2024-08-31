@@ -33,6 +33,9 @@ const App = () => {
       const response = await fetchWithRetry('http://localhost:8000/submit', {
         method: 'POST',
         body: data,
+        headers: {
+          'Accept': 'application/json',
+        },
       });
 
       if (response.ok) {

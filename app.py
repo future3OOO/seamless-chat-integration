@@ -12,6 +12,34 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 # Get the absolute path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+def setup_folders_and_files():
+    # Create necessary folders
+    for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            logging.info(f"Created folder: {folder}")
+    
+    # Move tapi.html to templates folder if needed
+    tapi_html_src = os.path.join(current_dir, 'tapi.html')
+    tapi_html_dest = os.path.join(current_dir, 'templates', 'tapi.html')
+    if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
+        shutil.copy2(tapi_html_src, tapi_html_dest)
+        logging.info("Copied tapi.html to templates folder")
+    
+    # Copy index.html to the build folder if needed
+    index_html_src = os.path.join(current_dir, 'index.html')
+    index_html_dest = os.path.join(current_dir, 'build', 'index.html')
+    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
+        shutil.copy2(index_html_src, index_html_dest)
+        logging.info("Copied index.html to the build folder")
+    
+    # Copy favicon.ico to the build folder if needed
+    favicon_src = os.path.join(current_dir, 'public', 'favicon.ico')
+    favicon_dest = os.path.join(current_dir, 'build', 'favicon.ico')
+    if os.path.exists(favicon_src) and not os.path.exists(favicon_dest):
+        shutil.copy2(favicon_src, favicon_dest)
+        logging.info("Copied favicon.ico to the build folder")
+
 # Set up Flask app with explicit template and static folder paths
 app = Flask(__name__, 
             static_folder=os.path.join(current_dir, 'build'),

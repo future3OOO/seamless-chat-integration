@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Logo from './assets/logo.svg';
+import React, { useState, useEffect } from 'react';
+import Logo from './assets/new form logo PP.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +11,20 @@ const App = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [logoSrc, setLogoSrc] = useState(Logo);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      console.log("Logo loaded successfully");
+      setLogoSrc(Logo);
+    };
+    img.onerror = (e) => {
+      console.error("Failed to load logo:", e);
+      setLogoSrc(null); // Set to null or a fallback image if available
+    };
+    img.src = Logo;
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -83,11 +97,17 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="w-32 h-32 mx-auto object-contain"
-          />
+          {logoSrc ? (
+            <img
+              src={logoSrc}
+              alt="Logo"
+              className="w-32 h-32 mx-auto object-contain"
+            />
+          ) : (
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
+              Logo not found
+            </div>
+          )}
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>

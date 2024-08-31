@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import NewFormLogo from '/src/assets/new form logo PP.svg';
-import FallbackLogo from '/src/assets/logo.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -13,18 +11,30 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [logoSrc, setLogoSrc] = useState(NewFormLogo);
+  const [logoSrc, setLogoSrc] = useState(null);
 
   useEffect(() => {
     const loadLogo = async () => {
       try {
-        const logoModule = await import('/src/assets/new form logo PP.svg');
-        console.log("New form logo loaded successfully");
-        setLogoSrc(logoModule.default);
+        const newFormLogo = new URL('/src/assets/new form logo PP.svg', import.meta.url).href;
+        const img = new Image();
+        img.onload = () => {
+          console.log("New form logo loaded successfully");
+          setLogoSrc(newFormLogo);
+        };
+        img.onerror = () => {
+          throw new Error("Failed to load new form logo");
+        };
+        img.src = newFormLogo;
       } catch (error) {
-        console.error("Failed to load new form logo:", error);
-        const fallbackModule = await import('/src/assets/logo.svg');
-        setLogoSrc(fallbackModule.default);
+        console.error("Error loading new form logo:", error);
+        try {
+          const fallbackLogo = new URL('/src/assets/logo.svg', import.meta.url).href;
+          setLogoSrc(fallbackLogo);
+        } catch (fallbackError) {
+          console.error("Error loading fallback logo:", fallbackError);
+          setLogoSrc(null);
+        }
       }
     };
     loadLogo();
@@ -105,11 +115,21 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img
-            src={logoSrc}
-            alt="Form Logo"
-            className="w-32 h-32 mx-auto object-contain"
-          />
+          {logoSrc ? (
+            <img
+              src={logoSrc}
+              alt="Form Logo"
+              className="w-32 h-32 mx-auto object-contain"
+              onError={(e) => {
+                console.error("Error loading image:", e);
+                e.target.src = new URL('/src/assets/logo.svg', import.meta.url).href;
+              }}
+            />
+          ) : (
+            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
+              Logo not available
+            </div>
+          )}
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
         <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>

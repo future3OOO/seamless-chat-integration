@@ -4,7 +4,6 @@ from flask_cors import CORS
 import subprocess
 import os
 import logging
-import shutil
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -94,7 +93,7 @@ def handle_options():
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-def setup_folders_and_files():
+if __name__ == '__main__':
     # Create necessary folders
     for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
         if not os.path.exists(folder):
@@ -105,13 +104,14 @@ def setup_folders_and_files():
     tapi_html_src = os.path.join(current_dir, 'tapi.html')
     tapi_html_dest = os.path.join(current_dir, 'templates', 'tapi.html')
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
-        shutil.copy2(tapi_html_src, tapi_html_dest)
-        logging.info("Copied tapi.html to templates folder")
+        os.rename(tapi_html_src, tapi_html_dest)
+        logging.info("Moved tapi.html to templates folder")
     
     # Copy index.html to the build folder if needed
     index_html_src = os.path.join(current_dir, 'index.html')
     index_html_dest = os.path.join(current_dir, 'build', 'index.html')
     if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
+        import shutil
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
     
@@ -119,11 +119,9 @@ def setup_folders_and_files():
     favicon_src = os.path.join(current_dir, 'public', 'favicon.ico')
     favicon_dest = os.path.join(current_dir, 'build', 'favicon.ico')
     if os.path.exists(favicon_src) and not os.path.exists(favicon_dest):
+        import shutil
         shutil.copy2(favicon_src, favicon_dest)
         logging.info("Copied favicon.ico to the build folder")
-
-if __name__ == '__main__':
-    setup_folders_and_files()
     
     port = 5000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access

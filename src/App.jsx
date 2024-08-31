@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Logo from './assets/mw-logo.png';
+import LogoJPG from './assets/mw-logo.jpg';
+import LogoSVG from './assets/mw-logo.svg';
 import FallbackLogo from './assets/logo.svg';
 
 const App = () => {
@@ -18,6 +20,37 @@ const App = () => {
 
   useEffect(() => {
     console.log('App component mounted');
+    const tryLoadImage = async (src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(src);
+        img.onerror = () => reject();
+        img.src = src;
+      });
+    };
+
+    const loadLogo = async () => {
+      try {
+        await tryLoadImage(Logo);
+        setLogoSrc(Logo);
+      } catch {
+        try {
+          await tryLoadImage(LogoJPG);
+          setLogoSrc(LogoJPG);
+        } catch {
+          try {
+            await tryLoadImage(LogoSVG);
+            setLogoSrc(LogoSVG);
+          } catch {
+            console.error('Failed to load all logo formats, using fallback');
+            setLogoSrc(FallbackLogo);
+            setLogoError(true);
+          }
+        }
+      }
+    };
+
+    loadLogo();
   }, []);
 
   const handleChange = (e) => {
@@ -95,8 +128,8 @@ const App = () => {
             src={logoSrc}
             alt="MW Logo"
             className="w-32 h-32 mx-auto object-contain"
-            onError={() => {
-              console.error('Failed to load primary logo, attempting to load fallback');
+            onError={(e) => {
+              console.error('Failed to load logo:', e);
               setLogoSrc(FallbackLogo);
               setLogoError(true);
             }}

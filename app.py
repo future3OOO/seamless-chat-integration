@@ -47,6 +47,10 @@ def serve(path):
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
 
+# Add this logging statement to help debug
+logging.info(f"Template folder: {app.template_folder}")
+logging.info(f"Static folder: {app.static_folder}")
+
 @app.route('/submit', methods=['POST'])
 def submit():
     logging.debug("Received POST request to /submit")

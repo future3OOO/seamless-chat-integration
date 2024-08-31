@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
-
-const logoImports = {
-  png: () => import('./assets/mw-logo.png').then(module => module.default).catch(() => null),
-  svg: () => import('./assets/logo.svg').then(module => module.default).catch(() => null),
-};
+import MWLogo from './assets/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -20,42 +16,20 @@ const App = () => {
   const [logoSrc, setLogoSrc] = useState(FallbackLogo);
 
   useEffect(() => {
-    const loadLogo = async () => {
-      try {
-        console.log("Attempting to load PNG logo...");
-        const pngLogo = await logoImports.png();
-        console.log("PNG logo import result:", pngLogo);
-        
-        if (pngLogo) {
-          console.log("Setting PNG logo");
-          setLogoSrc(pngLogo);
-        } else {
-          console.log("PNG logo not found, attempting to load SVG logo...");
-          const svgLogo = await logoImports.svg();
-          console.log("SVG logo import result:", svgLogo);
-          setLogoSrc(svgLogo || FallbackLogo);
-        }
-      } catch (error) {
-        console.error("Failed to load logo:", error);
-        setLogoSrc(FallbackLogo);
-      }
+    const img = new Image();
+    img.onload = () => {
+      console.log("MW logo loaded successfully");
+      setLogoSrc(MWLogo);
     };
-
-    loadLogo();
+    img.onerror = (e) => {
+      console.error("Failed to load MW logo:", e);
+      setLogoSrc(FallbackLogo);
+    };
+    img.src = MWLogo;
   }, []);
 
-  // Temporary function to check if the logo is loading correctly
-  const checkLogoLoading = () => {
-    console.log("Current logo source:", logoSrc);
-    if (logoSrc === FallbackLogo) {
-      console.log("Using fallback logo");
-    } else {
-      console.log("Using dynamically loaded logo");
-    }
-  };
-
   useEffect(() => {
-    checkLogoLoading();
+    console.log("Current logo source:", logoSrc);
   }, [logoSrc]);
 
   const handleChange = (e) => {
@@ -133,6 +107,10 @@ const App = () => {
             src={logoSrc}
             alt="MW Logo"
             className="w-32 h-32 mx-auto object-contain"
+            onError={(e) => {
+              console.error("Error loading image:", e);
+              e.target.src = FallbackLogo;
+            }}
           />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>

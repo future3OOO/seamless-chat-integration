@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import NewFormLogo from './assets/new form logo PP.svg';
 import FallbackLogo from './assets/logo.svg';
-import MWLogo from './assets/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -13,21 +13,21 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [logoSrc, setLogoSrc] = useState(FallbackLogo);
+  const [logoSrc, setLogoSrc] = useState(NewFormLogo);
 
   useEffect(() => {
     const img = new Image();
     img.onload = () => {
-      console.log("MW logo loaded successfully");
-      setLogoSrc(MWLogo);
+      console.log("New form logo loaded successfully");
+      setLogoSrc(NewFormLogo);
     };
     img.onerror = (e) => {
-      console.error("Failed to load MW logo:", e);
+      console.error("Failed to load new form logo:", e);
       console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
       setLogoSrc(FallbackLogo);
     };
-    img.src = MWLogo;
-    console.log("Attempting to load MW logo from:", MWLogo);
+    img.src = NewFormLogo;
+    console.log("Attempting to load new form logo from:", NewFormLogo);
   }, []);
 
   useEffect(() => {
@@ -107,7 +107,7 @@ const App = () => {
         <div className="flex justify-center mb-6">
           <img
             src={logoSrc}
-            alt="MW Logo"
+            alt="New Form Logo"
             className="w-32 h-32 mx-auto object-contain"
             onError={(e) => {
               console.error("Error loading image:", e);

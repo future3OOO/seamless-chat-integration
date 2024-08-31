@@ -21,6 +21,11 @@ CORS(app)  # Enable CORS for all routes
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'build'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):

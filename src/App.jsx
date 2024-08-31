@@ -9,6 +9,11 @@ const App = () => {
     issue: '',
     image: null
   });
+
+  // Add this useEffect hook to log when the component mounts
+  useEffect(() => {
+    console.log('App component mounted');
+  }, []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -88,6 +93,8 @@ const App = () => {
           <img src={Logo} alt="MW Logo" className="w-32 h-32 mx-auto object-cover" />
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>
+        {/* Add this paragraph for additional information */}
+        <p className="text-sm text-gray-600 mb-4 text-center">Please fill out the form below to submit your issue.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

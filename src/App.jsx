@@ -19,16 +19,23 @@ const App = () => {
         '/assets/new form logo PP.svg',
         '/assets/logo.svg',
         '/src/assets/new form logo PP.svg',
-        '/src/assets/logo.svg'
+        '/src/assets/logo.svg',
+        '/logo.svg',
+        '/mw-logo.png'
       ];
 
       for (const logo of logos) {
         try {
+          console.log("Attempting to load logo from:", logo);
           const response = await fetch(logo);
           if (response.ok) {
-            setLogoSrc(logo);
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            setLogoSrc(objectUrl);
             console.log("Logo loaded successfully:", logo);
             return;
+          } else {
+            console.log("Logo not found at:", logo);
           }
         } catch (error) {
           console.error("Error loading logo:", logo, error);
@@ -40,6 +47,13 @@ const App = () => {
     };
 
     loadLogo();
+
+    // Cleanup function to revoke object URL
+    return () => {
+      if (logoSrc) {
+        URL.revokeObjectURL(logoSrc);
+      }
+    };
   }, []);
 
   useEffect(() => {

@@ -21,17 +21,42 @@ const App = () => {
 
   useEffect(() => {
     const loadLogo = async () => {
-      const pngLogo = await logoImports.png();
-      if (pngLogo) {
-        setLogoSrc(pngLogo);
-      } else {
-        const svgLogo = await logoImports.svg();
-        setLogoSrc(svgLogo || FallbackLogo);
+      try {
+        console.log("Attempting to load PNG logo...");
+        const pngLogo = await logoImports.png();
+        console.log("PNG logo import result:", pngLogo);
+        
+        if (pngLogo) {
+          console.log("Setting PNG logo");
+          setLogoSrc(pngLogo);
+        } else {
+          console.log("PNG logo not found, attempting to load SVG logo...");
+          const svgLogo = await logoImports.svg();
+          console.log("SVG logo import result:", svgLogo);
+          setLogoSrc(svgLogo || FallbackLogo);
+        }
+      } catch (error) {
+        console.error("Failed to load logo:", error);
+        setLogoSrc(FallbackLogo);
       }
     };
 
     loadLogo();
   }, []);
+
+  // Temporary function to check if the logo is loading correctly
+  const checkLogoLoading = () => {
+    console.log("Current logo source:", logoSrc);
+    if (logoSrc === FallbackLogo) {
+      console.log("Using fallback logo");
+    } else {
+      console.log("Using dynamically loaded logo");
+    }
+  };
+
+  useEffect(() => {
+    checkLogoLoading();
+  }, [logoSrc]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

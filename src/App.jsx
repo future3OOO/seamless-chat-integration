@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
-import MWLogo from '/mw-logo.png';
+import MWLogo from './assets/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +23,7 @@ const App = () => {
     };
     img.onerror = (e) => {
       console.error("Failed to load MW logo:", e);
+      console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
       setLogoSrc(FallbackLogo);
     };
     img.src = MWLogo;

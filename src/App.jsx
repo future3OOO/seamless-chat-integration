@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Logo from './assets/mw-logo.png';
+import FallbackLogo from './assets/logo.svg';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [logoError, setLogoError] = useState(false);
+  const [logoSrc, setLogoSrc] = useState(Logo);
 
   useEffect(() => {
     console.log('App component mounted');
@@ -89,20 +91,18 @@ const App = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-center mb-6">
-          {!logoError ? (
-            <img
-              src={Logo}
-              alt="MW Logo"
-              className="w-32 h-32 mx-auto object-contain"
-              onError={() => {
-                console.error('Failed to load logo');
-                setLogoError(true);
-              }}
-            />
-          ) : (
-            <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">
-              Logo not found
-            </div>
+          <img
+            src={logoSrc}
+            alt="MW Logo"
+            className="w-32 h-32 mx-auto object-contain"
+            onError={() => {
+              console.error('Failed to load primary logo, attempting to load fallback');
+              setLogoSrc(FallbackLogo);
+              setLogoError(true);
+            }}
+          />
+          {logoError && (
+            <p className="text-sm text-red-500 mt-2">Primary logo not found, using fallback</p>
           )}
         </div>
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Selenium Form Project</h2>

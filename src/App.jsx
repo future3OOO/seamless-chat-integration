@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
-import MWLogo from './assets/mw-logo.png';
+import MWLogo from '/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -26,6 +26,7 @@ const App = () => {
       setLogoSrc(FallbackLogo);
     };
     img.src = MWLogo;
+    console.log("Attempting to load MW logo from:", MWLogo);
   }, []);
 
   useEffect(() => {
@@ -109,6 +110,7 @@ const App = () => {
             className="w-32 h-32 mx-auto object-contain"
             onError={(e) => {
               console.error("Error loading image:", e);
+              console.log("Failed src:", e.target.src);
               e.target.src = FallbackLogo;
             }}
           />

@@ -8,17 +8,9 @@ const App = () => {
     issue: '',
     image: null
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -54,6 +46,8 @@ const App = () => {
           issue: '',
           image: null
         });
+        // Open tapi.html in a new window
+        window.open('/tapi.html', '_blank');
       } else {
         throw new Error('Server response was not ok.');
       }
@@ -83,28 +77,6 @@ const App = () => {
       throw error;
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-2xl font-bold text-gray-800">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Error</h2>
-          <p className="text-center text-gray-800">{error}</p>
-          <button onClick={() => {setError(null); setRetryCount(0);}} className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">

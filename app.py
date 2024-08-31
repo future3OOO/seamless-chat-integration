@@ -67,16 +67,11 @@ def submit():
         
         logging.debug(f"Executing command: {' '.join(command)}")
         
-        # Run the Selenium script
-        result = subprocess.run(command, capture_output=True, text=True)
+        # Run the Selenium script asynchronously
+        subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
-        # Check if the script ran successfully
-        if result.returncode == 0:
-            logging.debug("Selenium script executed successfully")
-            return jsonify({"message": "Form submitted successfully!", "script_output": result.stdout}), 200
-        else:
-            logging.error(f"Selenium script failed with error: {result.stderr}")
-            return jsonify({"error": "Selenium script failed", "script_error": result.stderr}), 500
+        logging.debug("Selenium script started asynchronously")
+        return jsonify({"message": "Form submitted successfully! Selenium script is now processing."}), 200
 
     except Exception as e:
         logging.exception("An error occurred while processing the form submission")

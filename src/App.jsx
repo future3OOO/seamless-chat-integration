@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import FallbackLogo from './assets/logo.svg';
-import MWLogo from './assets/mw-logo.png';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -16,18 +15,28 @@ const App = () => {
   const [logoSrc, setLogoSrc] = useState(FallbackLogo);
 
   useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      console.log("MW logo loaded successfully");
-      setLogoSrc(MWLogo);
+    const loadLogo = async () => {
+      try {
+        const MWLogo = (await import('./assets/new form logo PP.svg')).default;
+        const img = new Image();
+        img.onload = () => {
+          console.log("MW logo loaded successfully");
+          setLogoSrc(MWLogo);
+        };
+        img.onerror = (e) => {
+          console.error("Failed to load MW logo:", e);
+          console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
+          setLogoSrc(FallbackLogo);
+        };
+        img.src = MWLogo;
+        console.log("Attempting to load MW logo from:", MWLogo);
+      } catch (error) {
+        console.error("Error importing logo:", error);
+        setLogoSrc(FallbackLogo);
+      }
     };
-    img.onerror = (e) => {
-      console.error("Failed to load MW logo:", e);
-      console.error("Error details:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
-      setLogoSrc(FallbackLogo);
-    };
-    img.src = MWLogo;
-    console.log("Attempting to load MW logo from:", MWLogo);
+
+    loadLogo();
   }, []);
 
   useEffect(() => {

@@ -5,7 +5,6 @@ from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import stat
 
 # Configure logging
 logging.basicConfig(
@@ -14,24 +13,18 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-app = Flask(__name__, static_folder='build', static_url_path='')
-CORS(app)
+# Get the absolute path of the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    try:
-        os.makedirs(UPLOAD_FOLDER)
-        logging.info(f"Created uploads folder: {UPLOAD_FOLDER}")
-    except Exception as e:
-        logging.error(f"Failed to create uploads folder: {e}")
+# Set up Flask app with explicit template and static folder paths
+app = Flask(__name__, 
+            static_folder=os.path.join(current_dir, 'build'),
+            static_url_path='',
+            template_folder=os.path.join(current_dir, 'templates'))
+CORS(app)  # Enable CORS for all routes
 
-# Set permissions for the uploads folder
-try:
-    os.chmod(UPLOAD_FOLDER, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-    logging.info(f"Set permissions for uploads folder: {UPLOAD_FOLDER}")
-except Exception as e:
-    logging.error(f"Failed to set permissions for uploads folder: {e}")
-
+# Set the upload folder path
+UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 

@@ -76,7 +76,7 @@ def submit():
         issue = request.form.get('issue')
         
         # Handle multiple image files
-        image_files = request.files.getlist('image')
+        image_files = [request.files[key] for key in request.files if key.startswith('image_')]
         
         logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
         logging.debug(f"Number of images received: {len(image_files)}")

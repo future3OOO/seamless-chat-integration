@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -14,6 +14,10 @@ const App = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    validateStep(step);
+  }, [formData, step]);
 
   const validateStep = (currentStep) => {
     let stepErrors = {};
@@ -258,6 +262,7 @@ const App = () => {
                 type="button"
                 onClick={nextStep}
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
+                disabled={!validateStep(step)}
               >
                 Next
                 <ArrowRight className="ml-2" size={18} />
@@ -266,7 +271,7 @@ const App = () => {
               <button
                 type="submit"
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
-                disabled={isLoading}
+                disabled={isLoading || !validateStep(step)}
               >
                 {isLoading ? (
                   <>

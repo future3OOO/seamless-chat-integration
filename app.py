@@ -80,8 +80,7 @@ def submit():
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
-        if image_paths:
-            command.extend(image_paths)
+        command.extend(image_paths)
         
         logging.debug(f"Executing command: {' '.join(command)}")
         

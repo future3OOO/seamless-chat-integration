@@ -31,17 +31,30 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [imageSelected, setImageSelected] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: files ? files[0] : value
-    }));
+    if (name === 'image') {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: files[0]
+      }));
+      setImageSelected(true);
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (currentStep < 4) {
+      nextStep();
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -94,6 +107,7 @@ const App = () => {
         ...prevState,
         image: file
       }));
+      setImageSelected(true);
     }
   };
 
@@ -185,7 +199,7 @@ const App = () => {
                   />
                 </div>
               </div>
-              {formData.image && (
+              {imageSelected && (
                 <p className="text-sm text-green-600">Image selected: {formData.image.name}</p>
               )}
             </div>

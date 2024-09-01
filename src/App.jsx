@@ -1,7 +1,9 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLoadScript } from '@react-google-maps/api';
+
+const libraries = ['places'];
 
 const validateStep = (step, formData) => {
   let stepErrors = {};
@@ -39,7 +41,7 @@ const App = () => {
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "YOUR_GOOGLE_API_KEY",
-    libraries: ["places"],
+    libraries: libraries,
   });
 
   useEffect(() => {

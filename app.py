@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import logging
+import stat
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,8 +15,18 @@ CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-    logging.info(f"Created uploads folder: {UPLOAD_FOLDER}")
+    try:
+        os.makedirs(UPLOAD_FOLDER)
+        logging.info(f"Created uploads folder: {UPLOAD_FOLDER}")
+    except Exception as e:
+        logging.error(f"Failed to create uploads folder: {e}")
+
+# Set permissions for the uploads folder
+try:
+    os.chmod(UPLOAD_FOLDER, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    logging.info(f"Set permissions for uploads folder: {UPLOAD_FOLDER}")
+except Exception as e:
+    logging.error(f"Failed to set permissions for uploads folder: {e}")
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
@@ -72,15 +83,6 @@ def submit():
         if not file_paths:
             logging.warning("No files were successfully uploaded and saved.")
         
-        # Execute the Selenium script
-        selenium_command = f"python selenium_script.py \"{full_name}\" \"{address}\" \"{email}\" \"{issue}\""
-        if file_paths:
-            selenium_command += f" \"{file_paths[0]}\""  # Pass the first image path if available
-        
-        logging.debug(f"Executing command: {selenium_command}")
-        subprocess.Popen(selenium_command, shell=True)
-        logging.debug("Selenium script started asynchronously")
-        
         return jsonify({
             "message": "Form submitted successfully!",
             "files": file_paths,
@@ -94,6 +96,32 @@ def submit():
     except Exception as e:
         logging.exception("An error occurred while processing the form submission")
         return jsonify({"error": str(e)}), 400
+
+@app.route('/test-upload', methods=['GET', 'POST'])
+def test_upload():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part', 400
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file', 400
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            try:
+                file.save(file_path)
+                return f'File uploaded successfully to {file_path}', 200
+            except Exception as e:
+                return f'Error saving file: {str(e)}', 500
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

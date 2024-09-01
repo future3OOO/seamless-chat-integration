@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLoadScript } from '@react-google-maps/api';
 
 const libraries = ['places'];
 
-const GOOGLE_MAPS_API_KEY = 'YOUR_ACTUAL_GOOGLE_API_KEY'; // Replace with your actual API key
+const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
 
 const validateStep = (step, formData) => {
   let stepErrors = {};

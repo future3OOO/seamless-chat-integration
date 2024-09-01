@@ -37,9 +37,6 @@ def serve(path):
     elif path == '':
         logging.debug("Serving index.html for root path")
         return send_from_directory(app.static_folder, 'index.html')
-    elif path.startswith('src/'):
-        # Serve files from the src directory
-        return send_from_directory(current_dir, path)
     elif os.path.exists(os.path.join(app.static_folder, path)):
         logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
@@ -114,14 +111,6 @@ if __name__ == '__main__':
         import shutil
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
-    
-    # Copy favicon.ico to the build folder if needed
-    favicon_src = os.path.join(current_dir, 'public', 'favicon.ico')
-    favicon_dest = os.path.join(current_dir, 'build', 'favicon.ico')
-    if os.path.exists(favicon_src) and not os.path.exists(favicon_dest):
-        import shutil
-        shutil.copy2(favicon_src, favicon_dest)
-        logging.info("Copied favicon.ico to the build folder")
     
     port = 5000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access

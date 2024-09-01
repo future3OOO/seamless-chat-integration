@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -36,33 +36,33 @@ const App = () => {
     return Object.keys(stepErrors).length === 0;
   }, [formData]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
     setFormData(prevState => ({
       ...prevState,
       [name]: files ? files[0] : value
     }));
-  };
+  }, []);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (validateStep(step)) {
       setStep(prevStep => Math.min(prevStep + 1, 3));
     }
-  };
+  }, [step, validateStep]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     setStep(prevStep => Math.max(prevStep - 1, 1));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (validateStep(3)) {
       setIsLoading(true);
       try {
         const formDataToSend = new FormData();
-        for (const key in formData) {
+        Object.keys(formData).forEach(key => {
           formDataToSend.append(key, formData[key]);
-        }
+        });
 
         const response = await fetch('http://localhost:5000/submit', {
           method: 'POST',
@@ -81,7 +81,11 @@ const App = () => {
         setIsLoading(false);
       }
     }
-  };
+  }, [formData, validateStep]);
+
+  useEffect(() => {
+    validateStep(step);
+  }, [step, validateStep]);
 
   const renderStep = () => {
     switch (step) {
@@ -250,7 +254,6 @@ const App = () => {
                 type="button"
                 onClick={nextStep}
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
-                disabled={!validateStep(step)}
               >
                 Next
                 <ArrowRight className="ml-2" size={18} />
@@ -259,7 +262,7 @@ const App = () => {
               <button
                 type="submit"
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
-                disabled={isLoading || !validateStep(step)}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <>

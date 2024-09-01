@@ -92,11 +92,17 @@ const App = () => {
     }
   };
 
-  const nextStep = () => {
+  const nextStep = (e) => {
+    if (e) {
+      e.preventDefault(); // Prevent form submission
+    }
     setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
-  const prevStep = () => {
+  const prevStep = (e) => {
+    if (e) {
+      e.preventDefault(); // Prevent form submission
+    }
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 

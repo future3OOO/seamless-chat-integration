@@ -105,7 +105,7 @@ const App = () => {
         Object.keys(formData).forEach(key => {
           if (key === 'images') {
             formData[key].forEach((image, index) => {
-              formDataToSend.append(`image_${index}`, image);
+              formDataToSend.append(`images[]`, image);
             });
           } else {
             formDataToSend.append(key, formData[key]);

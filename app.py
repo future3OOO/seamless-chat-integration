@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
-import subprocess
 import os
 import logging
 from PIL import Image
 import io
+import subprocess
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -53,22 +53,14 @@ def serve(path):
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
 
-def merge_images(image_files):
-    images = [Image.open(img) for img in image_files]
-    widths, heights = zip(*(i.size for i in images))
-
-    max_width = 800
-    total_height = sum(heights)
-    
-    new_img = Image.new('RGB', (max_width, total_height), color='white')
-
-    y_offset = 0
-    for img in images:
-        img = img.resize((max_width, int(img.size[1] * (max_width / img.size[0]))))
-        new_img.paste(img, (0, y_offset))
-        y_offset += img.size[1]
-
-    return new_img
+def save_image(image_file, index):
+    if image_file:
+        filename = f"image_{index}.jpg"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image_file.save(filepath)
+        logging.info(f"Saved image: {filepath}")
+        return filepath
+    return None
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -86,19 +78,17 @@ def submit():
         logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
         logging.debug(f"Number of images received: {len(image_files)}")
         
-        # Merge images if there are any
-        if image_files:
-            merged_image = merge_images(image_files)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'merged_image.jpg')
-            merged_image.save(image_path)
-            logging.debug(f"Merged image saved at: {image_path}")
-        else:
-            image_path = None
+        # Save images
+        image_paths = []
+        for index, image_file in enumerate(image_files):
+            image_path = save_image(image_file, index)
+            if image_path:
+                image_paths.append(image_path)
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
-        if image_path:
-            command.append(image_path)
+        if image_paths:
+            command.extend(image_paths)
         
         logging.debug(f"Executing command: {' '.join(command)}")
         

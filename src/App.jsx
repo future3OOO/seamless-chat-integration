@@ -120,11 +120,12 @@ const App = () => {
         if (response.ok) {
           setIsSubmitted(true);
         } else {
-          throw new Error('Server response was not ok');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Server error');
         }
       } catch (error) {
         console.error('Error submitting form:', error);
-        setErrors({ submit: error.message });
+        setErrors({ submit: error.message || 'Network error. Please try again.' });
       } finally {
         setIsLoading(false);
       }

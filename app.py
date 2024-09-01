@@ -23,6 +23,11 @@ CORS(app)  # Enable CORS for all routes
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Ensure the uploads folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+    logging.info(f"Created uploads folder: {UPLOAD_FOLDER}")
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'build'),
@@ -84,8 +89,6 @@ def submit():
         # Merge images if there are any
         if image_files:
             merged_image = merge_images(image_files)
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'merged_image.jpg')
             with open(image_path, 'wb') as f:
                 f.write(merged_image.getvalue())
@@ -118,27 +121,6 @@ def handle_options():
     return response
 
 if __name__ == '__main__':
-    # Create necessary folders
-    for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-            logging.info(f"Created folder: {folder}")
-    
-    # Move tapi.html to templates folder if needed
-    tapi_html_src = os.path.join(current_dir, 'tapi.html')
-    tapi_html_dest = os.path.join(current_dir, 'templates', 'tapi.html')
-    if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
-        os.rename(tapi_html_src, tapi_html_dest)
-        logging.info("Moved tapi.html to templates folder")
-    
-    # Copy index.html to the build folder if needed
-    index_html_src = os.path.join(current_dir, 'index.html')
-    index_html_dest = os.path.join(current_dir, 'build', 'index.html')
-    if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
-        import shutil
-        shutil.copy2(index_html_src, index_html_dest)
-        logging.info("Copied index.html to the build folder")
-    
     port = 5000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access
     logging.info(f"Starting Flask server on {host}:{port}")

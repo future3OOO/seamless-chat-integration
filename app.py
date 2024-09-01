@@ -1,9 +1,10 @@
-
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 import subprocess
 import os
 import logging
+from PIL import Image
+import io
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -44,6 +45,26 @@ def serve(path):
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
 
+def merge_images(image_files):
+    images = [Image.open(img) for img in image_files]
+    widths, heights = zip(*(i.size for i in images))
+
+    max_width = 800
+    total_height = sum(heights)
+    
+    new_img = Image.new('RGB', (max_width, total_height), color='white')
+
+    y_offset = 0
+    for img in images:
+        img = img.resize((max_width, int(img.size[1] * (max_width / img.size[0]))))
+        new_img.paste(img, (0, y_offset))
+        y_offset += img.size[1]
+
+    output = io.BytesIO()
+    new_img.save(output, format='JPEG')
+    output.seek(0)
+    return output
+
 @app.route('/submit', methods=['POST'])
 def submit():
     logging.debug("Received POST request to /submit")
@@ -53,18 +74,21 @@ def submit():
         address = request.form.get('address')
         email = request.form.get('email')
         issue = request.form.get('issue')
-        image = request.files.get('image')
         
-        # Log the received data (for debugging)
+        # Handle multiple image files
+        image_files = request.files.getlist('image')
+        
         logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
-        if image:
-            logging.debug(f"Image received: {image.filename}")
+        logging.debug(f"Number of images received: {len(image_files)}")
         
-        # Save the image if it exists
-        image_path = None
-        if image:
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
-            image.save(image_path)
+        # Merge images if there are any
+        if image_files:
+            merged_image = merge_images(image_files)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'merged_image.jpg')
+            with open(image_path, 'wb') as f:
+                f.write(merged_image.getvalue())
+        else:
+            image_path = None
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]

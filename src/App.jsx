@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
+import { mergeImages } from './utils/imageUtils';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
 
@@ -34,12 +35,13 @@ const App = () => {
     email: '',
     address: '',
     issue: '',
-    image: null
+    images: []
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [autocomplete, setAutocomplete] = useState(null);
+  const [previewUrls, setPreviewUrls] = useState([]);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -65,10 +67,21 @@ const App = () => {
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: files ? files[0] : value
-    }));
+    if (name === 'images') {
+      setFormData(prevState => ({
+        ...prevState,
+        images: [...prevState.images, ...files]
+      }));
+      
+      // Generate preview URLs for the new images
+      const newPreviewUrls = Array.from(files).map(file => URL.createObjectURL(file));
+      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   }, []);
 
   const nextStep = useCallback(() => {
@@ -92,7 +105,13 @@ const App = () => {
       try {
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
-          formDataToSend.append(key, formData[key]);
+          if (key === 'images') {
+            formData[key].forEach((image, index) => {
+              formDataToSend.append(`image_${index}`, image);
+            });
+          } else {
+            formDataToSend.append(key, formData[key]);
+          }
         });
 
         const response = await fetch('http://localhost:5000/submit', {
@@ -222,18 +241,26 @@ const App = () => {
                 {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
               </div>
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
+                <label htmlFor="images" className="block text-sm font-medium text-gray-700 mb-1">Upload Images</label>
                 <div className="relative">
                   <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                   <input
                     type="file"
-                    id="image"
-                    name="image"
+                    id="images"
+                    name="images"
                     onChange={handleChange}
                     accept="image/*"
+                    multiple
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]"
                   />
                 </div>
+                {previewUrls.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {previewUrls.map((url, index) => (
+                      <img key={index} src={url} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </>

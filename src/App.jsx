@@ -109,10 +109,10 @@ const App = () => {
                     value={formData.full_name}
                     onChange={handleChange}
                     placeholder="John Doe"
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-red-300' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                   />
                 </div>
-                {errors.full_name && <p className="mt-1 text-sm text-red-500">{errors.full_name}</p>}
+                {errors.full_name && <p className="mt-1 text-xs text-[#3582a1]">{errors.full_name}</p>}
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -125,10 +125,10 @@ const App = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="john@example.com"
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-red-300' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                   />
                 </div>
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+                {errors.email && <p className="mt-1 text-xs text-[#3582a1]">{errors.email}</p>}
               </div>
             </div>
           </>
@@ -148,10 +148,10 @@ const App = () => {
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="123 Main St, City, Country"
-                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-red-300' : 'border-gray-300'}`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                 />
               </div>
-              {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+              {errors.address && <p className="mt-1 text-xs text-[#3582a1]">{errors.address}</p>}
             </div>
           </>
         );
@@ -170,10 +170,10 @@ const App = () => {
                     value={formData.issue}
                     onChange={handleChange}
                     placeholder="Please provide details about your maintenance issue..."
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-red-300' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                   ></textarea>
                 </div>
-                {errors.issue && <p className="mt-1 text-sm text-red-500">{errors.issue}</p>}
+                {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
               </div>
               <div>
                 <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
@@ -284,7 +284,7 @@ const App = () => {
         </form>
         
         {errors.submit && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mt-4 p-3 bg-[#f0f7f9] border border-[#3582a1] text-[#3582a1] rounded">
             {errors.submit}
           </div>
         )}

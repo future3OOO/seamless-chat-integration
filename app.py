@@ -84,9 +84,12 @@ def submit():
         # Merge images if there are any
         if image_files:
             merged_image = merge_images(image_files)
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'merged_image.jpg')
             with open(image_path, 'wb') as f:
                 f.write(merged_image.getvalue())
+            logging.debug(f"Merged image saved at: {image_path}")
         else:
             image_path = None
         

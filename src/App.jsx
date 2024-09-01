@@ -37,28 +37,31 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
 
   useEffect(() => {
-    const checkGoogleMapsLoaded = () => {
-      if (window.google && window.google.maps) {
-        setIsGoogleMapsLoaded(true);
-      } else {
-        setTimeout(checkGoogleMapsLoaded, 100);
-      }
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setIsGoogleMapsLoaded(true);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
     };
-    checkGoogleMapsLoaded();
   }, []);
 
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
-      const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(addressInputRef.current, {
         componentRestrictions: { country: "nz" },
         fields: ["address_components", "formatted_address"],
       });
 
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
+      autocompleteRef.current.addListener("place_changed", () => {
+        const place = autocompleteRef.current.getPlace();
         setFormData(prevState => ({
           ...prevState,
           address: place.formatted_address,

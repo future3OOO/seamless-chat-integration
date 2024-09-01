@@ -1,9 +1,10 @@
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 import subprocess
 import os
 import logging
+import shutil
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -32,8 +33,8 @@ def favicon():
 def serve(path):
     logging.debug(f"Received request for path: {path}")
     if path == 'tapi.html':
-        logging.debug("Serving tapi.html from root directory")
-        return send_from_directory(current_dir, 'tapi.html')
+        logging.debug("Rendering tapi.html template")
+        return render_template('tapi.html')
     elif path == '':
         logging.debug("Serving index.html for root path")
         return send_from_directory(app.static_folder, 'index.html')
@@ -46,10 +47,6 @@ def serve(path):
     else:
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
-
-# Add this logging statement to help debug
-logging.info(f"Template folder: {app.template_folder}")
-logging.info(f"Static folder: {app.static_folder}")
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -99,24 +96,22 @@ def handle_options():
 
 def setup_folders_and_files():
     # Create necessary folders
-    for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'build')]:
+    for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
         if not os.path.exists(folder):
             os.makedirs(folder)
             logging.info(f"Created folder: {folder}")
     
-    # Ensure tapi.html is in the root directory
-    tapi_html_src = os.path.join(current_dir, 'templates', 'tapi.html')
-    tapi_html_dest = os.path.join(current_dir, 'tapi.html')
+    # Move tapi.html to templates folder if needed
+    tapi_html_src = os.path.join(current_dir, 'tapi.html')
+    tapi_html_dest = os.path.join(current_dir, 'templates', 'tapi.html')
     if os.path.exists(tapi_html_src) and not os.path.exists(tapi_html_dest):
-        import shutil
         shutil.copy2(tapi_html_src, tapi_html_dest)
-        logging.info("Copied tapi.html to root directory")
+        logging.info("Copied tapi.html to templates folder")
     
     # Copy index.html to the build folder if needed
     index_html_src = os.path.join(current_dir, 'index.html')
     index_html_dest = os.path.join(current_dir, 'build', 'index.html')
     if os.path.exists(index_html_src) and not os.path.exists(index_html_dest):
-        import shutil
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
     
@@ -124,7 +119,6 @@ def setup_folders_and_files():
     favicon_src = os.path.join(current_dir, 'public', 'favicon.ico')
     favicon_dest = os.path.join(current_dir, 'build', 'favicon.ico')
     if os.path.exists(favicon_src) and not os.path.exists(favicon_dest):
-        import shutil
         shutil.copy2(favicon_src, favicon_dest)
         logging.info("Copied favicon.ico to the build folder")
 

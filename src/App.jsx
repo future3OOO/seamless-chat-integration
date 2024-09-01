@@ -1,8 +1,11 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
+
+const libraries = ['places'];
 
 const validateStep = (step, formData) => {
   let stepErrors = {};
@@ -36,54 +39,26 @@ const App = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const addressInputRef = useRef(null);
-  const autocompleteRef = useRef(null);
-  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
+  const [autocomplete, setAutocomplete] = useState(null);
 
-  useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initAutocomplete`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
 
-      window.initAutocomplete = () => {
-        setIsGoogleMapsLoaded(true);
-      };
-    };
-
-    if (!window.google) {
-      loadGoogleMapsScript();
-    } else {
-      setIsGoogleMapsLoaded(true);
-    }
-
-    return () => {
-      delete window.initAutocomplete;
-      const script = document.querySelector(`script[src^="https://maps.googleapis.com/maps/api/js"]`);
-      if (script) {
-        document.head.removeChild(script);
-      }
-    };
+  const onLoad = useCallback((autocomplete) => {
+    setAutocomplete(autocomplete);
   }, []);
 
-  useEffect(() => {
-    if (isGoogleMapsLoaded && addressInputRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(addressInputRef.current, {
-        componentRestrictions: { country: "nz" },
-        fields: ["address_components", "formatted_address"],
-      });
-
-      autocompleteRef.current.addListener("place_changed", () => {
-        const place = autocompleteRef.current.getPlace();
-        setFormData(prevState => ({
-          ...prevState,
-          address: place.formatted_address,
-        }));
-      });
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setFormData(prevState => ({
+        ...prevState,
+        address: place.formatted_address,
+      }));
     }
-  }, [isGoogleMapsLoaded]);
+  };
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
@@ -191,16 +166,33 @@ const App = () => {
               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  ref={addressInputRef}
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Enter a New Zealand address"
-                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
-                />
+                {isLoaded && !loadError ? (
+                  <Autocomplete
+                    onLoad={onLoad}
+                    onPlaceChanged={onPlaceChanged}
+                    restrictions={{ country: "nz" }}
+                  >
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="Enter a New Zealand address"
+                      className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+                    />
+                  </Autocomplete>
+                ) : (
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Enter a New Zealand address"
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+                  />
+                )}
               </div>
               {errors.address && <p className="mt-1 text-xs text-[#3582a1]">{errors.address}</p>}
             </div>
@@ -261,7 +253,17 @@ const App = () => {
     );
   }
 
-  if (!isGoogleMapsLoaded) {
+  if (loadError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <p className="text-xl font-semibold text-red-600">Error loading Google Maps</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">

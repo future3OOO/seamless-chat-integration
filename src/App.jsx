@@ -87,6 +87,16 @@ const App = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prevState => ({
+        ...prevState,
+        image: file
+      }));
+    }
+  };
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -165,9 +175,19 @@ const App = () => {
                 <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
                 <div className="relative">
                   <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="file" id="image" name="image" onChange={handleChange} accept="image/*" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]" />
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]"
+                  />
                 </div>
               </div>
+              {formData.image && (
+                <p className="text-sm text-green-600">Image selected: {formData.image.name}</p>
+              )}
             </div>
           )}
           

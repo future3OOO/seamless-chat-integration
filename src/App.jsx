@@ -53,9 +53,12 @@ const App = () => {
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
+      let formattedAddress = place.formatted_address;
+      // Remove ", New Zealand" from the end of the address
+      formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
       setFormData(prevState => ({
         ...prevState,
-        address: place.formatted_address,
+        address: formattedAddress,
       }));
     }
   };
@@ -353,6 +356,18 @@ const App = () => {
           </div>
         )}
       </div>
+      <style jsx global>{`
+        .pac-container {
+          font-family: 'Inter', sans-serif;
+        }
+        .pac-container::after {
+          content: "Powered by Property Partner";
+          padding: 5px;
+          text-align: right;
+          font-size: 12px;
+          color: #666;
+        }
+      `}</style>
     </div>
   );
 };

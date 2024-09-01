@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import Logo from './assets/logo.svg';
-import { Upload, User, MapPin, Mail, FileText } from 'lucide-react';
+import { Upload, User, MapPin, Mail, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
+
+const ProgressIndicator = ({ currentStep, totalSteps }) => {
+  return (
+    <div className="flex justify-between mb-8">
+      {[...Array(totalSteps)].map((_, index) => (
+        <div key={index} className="flex items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${index < currentStep ? 'bg-[#3582a1] text-white' : 'bg-gray-200 text-gray-600'}`}>
+            {index + 1}
+          </div>
+          {index < totalSteps - 1 && (
+            <div className={`h-1 w-full ${index < currentStep - 1 ? 'bg-[#3582a1]' : 'bg-gray-200'}`}></div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -10,11 +27,10 @@ const App = () => {
     issue: '',
     image: null
   });
+  const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  console.log('App component rendered'); // Added test console log
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -35,7 +51,7 @@ const App = () => {
         formDataToSend.append(key, formData[key]);
       }
 
-      const response = await fetchWithRetry('http://localhost:5000/submit', {
+      const response = await fetch('http://localhost:5000/submit', {
         method: 'POST',
         body: formDataToSend,
       });
@@ -63,25 +79,12 @@ const App = () => {
     }
   };
 
-  const fetchWithRetry = async (url, options, maxRetries = 3) => {
-    let retryCount = 0;
-    while (retryCount < maxRetries) {
-      try {
-        const response = await fetch(url, options);
-        if (response.status === 429 && retryCount < maxRetries - 1) {
-          const retryAfter = response.headers.get('Retry-After') || 5;
-          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
-          retryCount++;
-        } else {
-          return response;
-        }
-      } catch (error) {
-        if (retryCount === maxRetries - 1) {
-          throw error;
-        }
-        retryCount++;
-      }
-    }
+  const nextStep = () => {
+    setCurrentStep(prev => Math.min(prev + 1, 4));
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
   if (isSubmitted) {
@@ -98,65 +101,107 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl">
         <div className="flex justify-center mb-6">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="w-32 h-32 mx-auto object-contain"
-          />
+          <img src={Logo} alt="Logo" className="w-32 h-32 mx-auto object-contain" />
         </div>
-        <h2 className="text-2xl font-bold mb-2 text-center text-gray-800">Tenant maintenance request</h2>
-        <p className="text-sm text-gray-600 mb-6 text-center">Please fill out the form below to submit your issue.</p>
+        <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">Maintenance Request</h2>
+        <p className="text-sm text-gray-600 mb-6 text-center">Let's get your issue resolved quickly and efficiently!</p>
+        
+        <ProgressIndicator currentStep={currentStep} totalSteps={4} />
+        
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
-            <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input type="text" id="full_name" name="full_name" value={formData.full_name} onChange={handleChange} placeholder="John Doe" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
+              <div className="relative">
+                <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="text" id="full_name" name="full_name" value={formData.full_name} onChange={handleChange} placeholder="John Doe" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+                </div>
+              </div>
+              <div className="relative">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="relative">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input type="text" id="address" name="address" value={formData.address} onChange={handleChange} placeholder="123 Main St, City, Country" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+          )}
+          
+          {currentStep === 2 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Property Details</h3>
+              <div className="relative">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="text" id="address" name="address" value={formData.address} onChange={handleChange} placeholder="123 Main St, City, Country" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="relative">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1]" />
+          )}
+          
+          {currentStep === 3 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Issue Description</h3>
+              <div className="relative">
+                <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Describe Your Issue</label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <textarea id="issue" name="issue" value={formData.issue} onChange={handleChange} placeholder="Please provide details about your maintenance issue..." required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px]"></textarea>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="relative">
-            <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Issue</label>
-            <div className="relative">
-              <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
-              <textarea id="issue" name="issue" value={formData.issue} onChange={handleChange} placeholder="Describe your issue here..." required className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px]"></textarea>
+          )}
+          
+          {currentStep === 4 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Supporting Image</h3>
+              <div className="relative">
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
+                <div className="relative">
+                  <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input type="file" id="image" name="image" onChange={handleChange} accept="image/*" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]" />
+                </div>
+              </div>
             </div>
+          )}
+          
+          <div className="flex justify-between mt-8">
+            {currentStep > 1 && (
+              <button type="button" onClick={prevStep} className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors flex items-center">
+                <ChevronLeft size={18} className="mr-2" /> Previous
+              </button>
+            )}
+            {currentStep < 4 ? (
+              <button type="button" onClick={nextStep} className="bg-[#3582a1] text-white px-4 py-2 rounded hover:bg-[#2a6a84] transition-colors flex items-center ml-auto">
+                Next <ChevronRight size={18} className="ml-2" />
+              </button>
+            ) : (
+              <button type="submit" className="bg-[#3582a1] text-white px-4 py-2 rounded hover:bg-[#2a6a84] transition-colors flex items-center ml-auto" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : 'Submit Request'}
+              </button>
+            )}
           </div>
-          <div className="relative">
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image</label>
-            <div className="relative">
-              <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input type="file" id="image" name="image" onChange={handleChange} accept="image/*" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]" />
-            </div>
-          </div>
-          <button type="submit" className="w-full bg-[#3582a1] text-white px-4 py-2 rounded hover:bg-[#2a6a84] transition-colors flex items-center justify-center" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Submitting...
-              </>
-            ) : 'Submit'}
-          </button>
         </form>
+        
+        {error && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

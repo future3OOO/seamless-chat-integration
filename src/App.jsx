@@ -109,7 +109,7 @@ const App = () => {
                     value={formData.full_name}
                     onChange={handleChange}
                     placeholder="John Doe"
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-red-300' : 'border-gray-300'}`}
                   />
                 </div>
                 {errors.full_name && <p className="mt-1 text-sm text-red-500">{errors.full_name}</p>}
@@ -125,7 +125,7 @@ const App = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="john@example.com"
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-red-300' : 'border-gray-300'}`}
                   />
                 </div>
                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
@@ -148,7 +148,7 @@ const App = () => {
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="123 Main St, City, Country"
-                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-red-300' : 'border-gray-300'}`}
                 />
               </div>
               {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
@@ -170,7 +170,7 @@ const App = () => {
                     value={formData.issue}
                     onChange={handleChange}
                     placeholder="Please provide details about your maintenance issue..."
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-red-300' : 'border-gray-300'}`}
                   ></textarea>
                 </div>
                 {errors.issue && <p className="mt-1 text-sm text-red-500">{errors.issue}</p>}
@@ -266,7 +266,7 @@ const App = () => {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
+                className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading || Object.keys(errors).length > 0}
               >
                 {isLoading ? (

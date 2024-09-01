@@ -6,8 +6,8 @@ const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     full_name: '',
-    address: '',
     email: '',
+    address: '',
     issue: '',
     image: null
   });
@@ -159,39 +159,35 @@ const App = () => {
         return (
           <>
             <h2 className="text-2xl font-bold mb-4">Issue Description</h2>
-            <div>
-              <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Describe Your Issue</label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
-                <textarea
-                  id="issue"
-                  name="issue"
-                  value={formData.issue}
-                  onChange={handleChange}
-                  placeholder="Please provide details about your maintenance issue..."
-                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-red-500' : 'border-gray-300'}`}
-                ></textarea>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Describe Your Issue</label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <textarea
+                    id="issue"
+                    name="issue"
+                    value={formData.issue}
+                    onChange={handleChange}
+                    placeholder="Please provide details about your maintenance issue..."
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-red-500' : 'border-gray-300'}`}
+                  ></textarea>
+                </div>
+                {errors.issue && <p className="mt-1 text-sm text-red-500">{errors.issue}</p>}
               </div>
-              {errors.issue && <p className="mt-1 text-sm text-red-500">{errors.issue}</p>}
-            </div>
-          </>
-        );
-      case 4:
-        return (
-          <>
-            <h2 className="text-2xl font-bold mb-4">Supporting Image</h2>
-            <div>
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
-              <div className="relative">
-                <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  onChange={handleChange}
-                  accept="image/*"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]"
-                />
+              <div>
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Upload Image (Optional)</label>
+                <div className="relative">
+                  <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleChange}
+                    accept="image/*"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#3582a1] file:text-white hover:file:bg-[#2a6a84]"
+                  />
+                </div>
               </div>
             </div>
           </>
@@ -225,13 +221,13 @@ const App = () => {
         
         <div className="mb-6">
           <div className="flex justify-between mb-2">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3].map((s) => (
               <div
                 key={s}
-                className={`w-1/4 h-2 ${
+                className={`w-1/3 h-2 ${
                   s <= step ? 'bg-[#3582a1]' : 'bg-gray-200'
                 } ${s === 1 ? 'rounded-l-full' : ''} ${
-                  s === 4 ? 'rounded-r-full' : ''
+                  s === 3 ? 'rounded-r-full' : ''
                 }`}
               ></div>
             ))}
@@ -240,7 +236,6 @@ const App = () => {
             <span>Personal</span>
             <span>Property</span>
             <span>Issue</span>
-            <span>Image</span>
           </div>
         </div>
 
@@ -258,7 +253,7 @@ const App = () => {
                 Previous
               </button>
             )}
-            {step < 4 ? (
+            {step < 3 ? (
               <button
                 type="button"
                 onClick={nextStep}

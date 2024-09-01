@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -15,11 +15,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    validateStep(step);
-  }, [formData, step]);
-
-  const validateStep = (currentStep) => {
+  const validateStep = useCallback((currentStep) => {
     let stepErrors = {};
     switch (currentStep) {
       case 1:
@@ -38,36 +34,29 @@ const App = () => {
     }
     setErrors(stepErrors);
     return Object.keys(stepErrors).length === 0;
-  };
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: files[0]
-      }));
-    } else {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
-    }
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: files ? files[0] : value
+    }));
   };
 
   const nextStep = () => {
     if (validateStep(step)) {
-      setStep(prevStep => prevStep + 1);
+      setStep(prevStep => Math.min(prevStep + 1, 3));
     }
   };
 
   const prevStep = () => {
-    setStep(prevStep => prevStep - 1);
+    setStep(prevStep => Math.max(prevStep - 1, 1));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateStep(step)) {
+    if (validateStep(3)) {
       setIsLoading(true);
       try {
         const formDataToSend = new FormData();

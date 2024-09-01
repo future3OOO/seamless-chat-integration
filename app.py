@@ -44,10 +44,13 @@ def submit():
         
         # Handle multiple image files
         uploaded_files = request.files.getlist("images[]")
+        logging.debug(f"Number of files received: {len(uploaded_files)}")
+        
         file_paths = []
         
         for file in uploaded_files:
             if file:
+                logging.debug(f"Processing file: {file.filename}")
                 # Generate a unique filename
                 original_filename = secure_filename(file.filename)
                 unique_filename = f"{uuid.uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{original_filename}"

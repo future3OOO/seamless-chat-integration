@@ -14,6 +14,8 @@ const App = () => {
   const [error, setError] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  console.log('App component rendered'); // Added test console log
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData(prevState => ({
@@ -63,21 +65,23 @@ const App = () => {
   };
 
   const fetchWithRetry = async (url, options, maxRetries = 3) => {
-    try {
-      const response = await fetch(url, options);
-      if (response.status === 429 && retryCount < maxRetries) {
-        const retryAfter = response.headers.get('Retry-After') || 5;
-        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
-        setRetryCount(prevCount => prevCount + 1);
-        return fetchWithRetry(url, options, maxRetries);
+    let retryCount = 0;
+    while (retryCount < maxRetries) {
+      try {
+        const response = await fetch(url, options);
+        if (response.status === 429 && retryCount < maxRetries - 1) {
+          const retryAfter = response.headers.get('Retry-After') || 5;
+          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+          retryCount++;
+        } else {
+          return response;
+        }
+      } catch (error) {
+        if (retryCount === maxRetries - 1) {
+          throw error;
+        }
+        retryCount++;
       }
-      return response;
-    } catch (error) {
-      if (retryCount < maxRetries) {
-        setRetryCount(prevCount => prevCount + 1);
-        return fetchWithRetry(url, options, maxRetries);
-      }
-      throw error;
     }
   };
 

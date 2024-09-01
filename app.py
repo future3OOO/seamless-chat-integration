@@ -21,12 +21,15 @@ CORS(app)  # Enable CORS for all routes
 
 # Set the upload folder path
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the uploads folder exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
     logging.info(f"Created uploads folder: {UPLOAD_FOLDER}")
+else:
+    logging.info(f"Uploads folder already exists: {UPLOAD_FOLDER}")
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/favicon.ico')
 def favicon():

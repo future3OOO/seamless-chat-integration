@@ -5,6 +5,8 @@ import { useLoadScript } from '@react-google-maps/api';
 
 const libraries = ['places'];
 
+const GOOGLE_MAPS_API_KEY = 'YOUR_ACTUAL_GOOGLE_API_KEY'; // Replace with your actual API key
+
 const validateStep = (step, formData) => {
   let stepErrors = {};
   switch (step) {
@@ -39,13 +41,13 @@ const App = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const addressInputRef = useRef(null);
 
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "YOUR_GOOGLE_API_KEY",
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: libraries,
   });
 
   useEffect(() => {
-    if (isLoaded && addressInputRef.current) {
+    if (isLoaded && !loadError && addressInputRef.current) {
       const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
         componentRestrictions: { country: "nz" },
         fields: ["address_components", "formatted_address"],
@@ -59,7 +61,7 @@ const App = () => {
         }));
       });
     }
-  }, [isLoaded]);
+  }, [isLoaded, loadError]);
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
@@ -236,6 +238,9 @@ const App = () => {
       </div>
     );
   }
+
+  if (!isLoaded) return <div>Loading...</div>;
+  if (loadError) return <div>Error loading Google Maps API: {loadError.message}</div>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">

@@ -2,8 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 import os
 import logging
-from PIL import Image
-import io
+from werkzeug.utils import secure_filename
 import subprocess
 
 # Configure logging
@@ -53,15 +52,6 @@ def serve(path):
         logging.debug(f"Path not found: {path}")
         return "Not Found", 404
 
-def save_image(image_file, index):
-    if image_file:
-        filename = f"image_{index}.jpg"
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image_file.save(filepath)
-        logging.info(f"Saved image: {filepath}")
-        return filepath
-    return None
-
 @app.route('/submit', methods=['POST'])
 def submit():
     logging.debug("Received POST request to /submit")
@@ -81,9 +71,12 @@ def submit():
         # Save images
         image_paths = []
         for index, image_file in enumerate(image_files):
-            image_path = save_image(image_file, index)
-            if image_path:
-                image_paths.append(image_path)
+            if image_file:
+                filename = secure_filename(f"image_{index}_{image_file.filename}")
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image_file.save(filepath)
+                image_paths.append(filepath)
+                logging.info(f"Saved image: {filepath}")
         
         # Prepare the command to run the Selenium script
         command = ['python', 'selenium_script.py', full_name, address, email, issue]
@@ -102,17 +95,10 @@ def submit():
         logging.exception("An error occurred while processing the form submission")
         return jsonify({"error": str(e)}), 400
 
-@app.route('/submit', methods=['OPTIONS'])
-def handle_options():
-    response = app.make_default_options_response()
-    response.headers['Access-Control-Allow-Methods'] = 'POST'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    return response
-
 if __name__ == '__main__':
     port = 5000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access
     logging.info(f"Starting Flask server on {host}:{port}")
-    logging.info(f"Access the React app at: http://localhost:{port}")
-    logging.info(f"Access the tapi.html page at: http://localhost:{port}/tapi.html")
+    logging.info(f"Access the React app at: http://{host}:{port}")
+    logging.info(f"Access the tapi.html page at: http://{host}:{port}/tapi.html")
     app.run(debug=True, host=host, port=port)

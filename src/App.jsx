@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useLoadScript } from '@react-google-maps/api';
 
 const validateStep = (step, formData) => {
   let stepErrors = {};
@@ -34,6 +35,29 @@ const App = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const addressInputRef = useRef(null);
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: "YOUR_GOOGLE_API_KEY",
+    libraries: ["places"],
+  });
+
+  useEffect(() => {
+    if (isLoaded && addressInputRef.current) {
+      const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+        componentRestrictions: { country: "nz" },
+        fields: ["address_components", "formatted_address"],
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        setFormData(prevState => ({
+          ...prevState,
+          address: place.formatted_address,
+        }));
+      });
+    }
+  }, [isLoaded]);
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
@@ -145,9 +169,10 @@ const App = () => {
                   type="text"
                   id="address"
                   name="address"
+                  ref={addressInputRef}
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="123 Main St, City, Country"
+                  placeholder="Enter a New Zealand address"
                   className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                 />
               </div>

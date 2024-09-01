@@ -68,10 +68,7 @@ def merge_images(image_files):
         new_img.paste(img, (0, y_offset))
         y_offset += img.size[1]
 
-    output = io.BytesIO()
-    new_img.save(output, format='JPEG')
-    output.seek(0)
-    return output
+    return new_img
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -84,7 +81,7 @@ def submit():
         issue = request.form.get('issue')
         
         # Handle multiple image files
-        image_files = [request.files[key] for key in request.files if key.startswith('image_')]
+        image_files = request.files.getlist('images[]')
         
         logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
         logging.debug(f"Number of images received: {len(image_files)}")
@@ -93,8 +90,7 @@ def submit():
         if image_files:
             merged_image = merge_images(image_files)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'merged_image.jpg')
-            with open(image_path, 'wb') as f:
-                f.write(merged_image.getvalue())
+            merged_image.save(image_path)
             logging.debug(f"Merged image saved at: {image_path}")
         else:
             image_path = None

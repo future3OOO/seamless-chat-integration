@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
-import { mergeImages } from './utils/imageUtils';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
 
@@ -56,7 +55,6 @@ const App = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
       let formattedAddress = place.formatted_address;
-      // Remove ", New Zealand" from the end of the address
       formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
       setFormData(prevState => ({
         ...prevState,
@@ -68,13 +66,13 @@ const App = () => {
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
     if (name === 'images') {
+      const newImages = Array.from(files);
       setFormData(prevState => ({
         ...prevState,
-        images: [...prevState.images, ...files]
+        images: [...prevState.images, ...newImages]
       }));
       
-      // Generate preview URLs for the new images
-      const newPreviewUrls = Array.from(files).map(file => URL.createObjectURL(file));
+      const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
       setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
     } else {
       setFormData(prevState => ({

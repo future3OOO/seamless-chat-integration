@@ -235,7 +235,7 @@ const App = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
           {renderStep()}
           
           <div className="flex justify-between mt-6">
@@ -260,9 +260,10 @@ const App = () => {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
-                disabled={isLoading}
+                disabled={isLoading || !validateStep(3)}
               >
                 {isLoading ? (
                   <>

@@ -1,4 +1,5 @@
 import os
+import subprocess
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -33,12 +34,13 @@ def serve(path):
 @app.route('/submit', methods=['POST'])
 def submit():
     try:
+        logging.debug(f"Received POST request to /submit")
         full_name = request.form.get('full_name')
         address = request.form.get('address')
         email = request.form.get('email')
         issue = request.form.get('issue')
         
-        logging.info(f"Received form data: full_name={full_name}, address={address}, email={email}, issue={issue}")
+        logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
         
         # Handle multiple image files
         uploaded_files = request.files.getlist("images[]")
@@ -64,9 +66,14 @@ def submit():
         if not file_paths:
             logging.warning("No files were successfully uploaded and saved.")
         
-        # Log the form data and file paths
-        logging.info(f"Processed form data: {full_name}, {address}, {email}, {issue}")
-        logging.info(f"Saved files: {file_paths}")
+        # Execute the Selenium script
+        selenium_command = f"python selenium_script.py \"{full_name}\" \"{address}\" \"{email}\" \"{issue}\""
+        if file_paths:
+            selenium_command += f" \"{file_paths[0]}\""  # Pass the first image path if available
+        
+        logging.debug(f"Executing command: {selenium_command}")
+        subprocess.Popen(selenium_command, shell=True)
+        logging.debug("Selenium script started asynchronously")
         
         return jsonify({
             "message": "Form submitted successfully!",

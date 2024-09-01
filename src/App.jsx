@@ -1,9 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
-import { useLoadScript } from '@react-google-maps/api';
-
-const libraries = ['places'];
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
 
@@ -40,14 +37,21 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const addressInputRef = useRef(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: libraries,
-  });
+  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && !loadError && addressInputRef.current) {
+    const checkGoogleMapsLoaded = () => {
+      if (window.google && window.google.maps) {
+        setIsGoogleMapsLoaded(true);
+      } else {
+        setTimeout(checkGoogleMapsLoaded, 100);
+      }
+    };
+    checkGoogleMapsLoaded();
+  }, []);
+
+  useEffect(() => {
+    if (isGoogleMapsLoaded && addressInputRef.current) {
       const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
         componentRestrictions: { country: "nz" },
         fields: ["address_components", "formatted_address"],
@@ -61,7 +65,7 @@ const App = () => {
         }));
       });
     }
-  }, [isLoaded, loadError]);
+  }, [isGoogleMapsLoaded]);
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
@@ -239,24 +243,12 @@ const App = () => {
     );
   }
 
-  if (!isLoaded) {
+  if (!isGoogleMapsLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-xl font-semibold">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Google Maps</h2>
-          <p className="text-gray-700 mb-4">We're having trouble loading the Google Maps API. Please try refreshing the page or check your internet connection.</p>
-          <p className="text-sm text-gray-500">Error details: {loadError.message}</p>
+          <p className="text-xl font-semibold">Loading Google Maps...</p>
         </div>
       </div>
     );

@@ -1,11 +1,11 @@
 import os
 import subprocess
+import uuid
+from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import logging
-import uuid
-from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -35,6 +35,9 @@ def serve(path):
 def submit():
     try:
         logging.debug(f"Received POST request to /submit")
+        logging.debug(f"Request form data: {request.form}")
+        logging.debug(f"Request files: {request.files}")
+
         full_name = request.form.get('full_name')
         address = request.form.get('address')
         email = request.form.get('email')
@@ -49,7 +52,7 @@ def submit():
         file_paths = []
         
         for file in uploaded_files:
-            if file:
+            if file and file.filename:
                 logging.debug(f"Processing file: {file.filename}")
                 # Generate a unique filename
                 original_filename = secure_filename(file.filename)
@@ -59,8 +62,9 @@ def submit():
                 try:
                     file.save(file_path)
                     if os.path.exists(file_path):
+                        file_size = os.path.getsize(file_path)
                         file_paths.append(file_path)
-                        logging.info(f"File saved successfully: {file_path}")
+                        logging.info(f"File saved successfully: {file_path}, Size: {file_size} bytes")
                     else:
                         logging.error(f"File not found after save attempt: {file_path}")
                 except Exception as e:

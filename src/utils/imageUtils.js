@@ -9,16 +9,14 @@ export const mergeImages = async (images) => {
 
   // Calculate dimensions
   let totalHeight = 0;
-  let maxImageWidth = 0;
   loadedImages.forEach(img => {
     const aspectRatio = img.width / img.height;
     const scaledHeight = maxWidth / aspectRatio;
     totalHeight += scaledHeight + padding;
-    maxImageWidth = Math.max(maxImageWidth, maxWidth);
   });
 
   // Create canvas
-  const canvas = createCanvas(maxImageWidth, totalHeight);
+  const canvas = createCanvas(maxWidth, totalHeight);
   const ctx = canvas.getContext('2d');
 
   // Draw background
@@ -36,6 +34,18 @@ export const mergeImages = async (images) => {
 
   // Convert canvas to blob
   return new Promise((resolve) => {
-    canvas.toBlob(resolve, 'image/jpeg', 0.8);
+    canvas.toBlob(resolve, 'image/jpeg', 0.9);
   });
+};
+
+export const handleImageUpload = async (files) => {
+  if (files.length === 0) return null;
+  
+  if (files.length === 1) {
+    return files[0];
+  }
+
+  const imageUrls = Array.from(files).map(file => URL.createObjectURL(file));
+  const mergedImageBlob = await mergeImages(imageUrls);
+  return new File([mergedImageBlob], 'merged_image.jpg', { type: 'image/jpeg' });
 };

@@ -2,6 +2,26 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
 
+const validateStep = (step, formData) => {
+  let stepErrors = {};
+  switch (step) {
+    case 1:
+      if (!formData.full_name.trim()) stepErrors.full_name = 'Full name is required';
+      if (!formData.email.trim()) stepErrors.email = 'Email is required';
+      else if (!/\S+@\S+\.\S+/.test(formData.email)) stepErrors.email = 'Email is invalid';
+      break;
+    case 2:
+      if (!formData.address.trim()) stepErrors.address = 'Address is required';
+      break;
+    case 3:
+      if (!formData.issue.trim()) stepErrors.issue = 'Issue description is required';
+      break;
+    default:
+      break;
+  }
+  return stepErrors;
+};
+
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -15,27 +35,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const validateStep = useCallback((currentStep) => {
-    let stepErrors = {};
-    switch (currentStep) {
-      case 1:
-        if (!formData.full_name.trim()) stepErrors.full_name = 'Full name is required';
-        if (!formData.email.trim()) stepErrors.email = 'Email is required';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) stepErrors.email = 'Email is invalid';
-        break;
-      case 2:
-        if (!formData.address.trim()) stepErrors.address = 'Address is required';
-        break;
-      case 3:
-        if (!formData.issue.trim()) stepErrors.issue = 'Issue description is required';
-        break;
-      default:
-        break;
-    }
-    setErrors(stepErrors);
-    return Object.keys(stepErrors).length === 0;
-  }, [formData]);
-
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
     setFormData(prevState => ({
@@ -45,10 +44,12 @@ const App = () => {
   }, []);
 
   const nextStep = useCallback(() => {
-    if (validateStep(step)) {
+    const stepErrors = validateStep(step, formData);
+    setErrors(stepErrors);
+    if (Object.keys(stepErrors).length === 0) {
       setStep(prevStep => Math.min(prevStep + 1, 3));
     }
-  }, [step, validateStep]);
+  }, [step, formData]);
 
   const prevStep = useCallback(() => {
     setStep(prevStep => Math.max(prevStep - 1, 1));
@@ -56,7 +57,9 @@ const App = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (validateStep(3)) {
+    const stepErrors = validateStep(3, formData);
+    setErrors(stepErrors);
+    if (Object.keys(stepErrors).length === 0) {
       setIsLoading(true);
       try {
         const formDataToSend = new FormData();
@@ -81,11 +84,12 @@ const App = () => {
         setIsLoading(false);
       }
     }
-  }, [formData, validateStep]);
+  }, [formData]);
 
   useEffect(() => {
-    validateStep(step);
-  }, [step, validateStep]);
+    const stepErrors = validateStep(step, formData);
+    setErrors(stepErrors);
+  }, [step, formData]);
 
   const renderStep = () => {
     switch (step) {
@@ -263,7 +267,7 @@ const App = () => {
                 type="button"
                 onClick={handleSubmit}
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto"
-                disabled={isLoading || !validateStep(3)}
+                disabled={isLoading || Object.keys(errors).length > 0}
               >
                 {isLoading ? (
                   <>

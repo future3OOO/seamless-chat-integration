@@ -72,8 +72,7 @@ const App = () => {
         if (response.ok) {
           setIsSubmitted(true);
         } else {
-          const errorText = await response.text();
-          throw new Error(`Server response was not ok. Status: ${response.status}, Message: ${errorText}`);
+          throw new Error('Server response was not ok');
         }
       } catch (error) {
         console.error('Error submitting form:', error);

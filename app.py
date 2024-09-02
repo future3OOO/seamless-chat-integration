@@ -112,7 +112,7 @@ if __name__ == '__main__':
         shutil.copy2(index_html_src, index_html_dest)
         logging.info("Copied index.html to the build folder")
     
-    port = 5000
+    port = 8000
     host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access
     logging.info(f"Starting Flask server on {host}:{port}")
     logging.info(f"Access the React app at: http://localhost:{port}")

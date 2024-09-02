@@ -2,11 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add some custom styles to test Tailwind */
-.custom-heading {
-  @apply text-2xl font-bold text-blue-600 mb-4;
+body {
+  font-family: 'Inter', sans-serif;
 }
 
-.custom-button {
-  @apply bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors;
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-\[\#3582a1\] {
+  --tw-gradient-from: #3582a1;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(53, 130, 161, 0));
+}
+
+.to-\[\#8ecfdc\] {
+  --tw-gradient-to: #8ecfdc;
+}
+
+.custom-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
 }

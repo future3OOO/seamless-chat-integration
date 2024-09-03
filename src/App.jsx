@@ -1,11 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+import React, { useState, useCallback } from 'react';
 import Logo from './assets/logo.svg';
 import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
-
-const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
-
-const libraries = ['places'];
 
 const validateStep = (step, formData) => {
   let stepErrors = {};
@@ -39,29 +34,7 @@ const App = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [autocomplete, setAutocomplete] = useState(null);
   const [previewUrls, setPreviewUrls] = useState([]);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
-
-  const onLoad = useCallback((autocomplete) => {
-    setAutocomplete(autocomplete);
-  }, []);
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      let formattedAddress = place.formatted_address;
-      formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
-      setFormData(prevState => ({
-        ...prevState,
-        address: formattedAddress,
-      }));
-    }
-  };
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
@@ -132,11 +105,6 @@ const App = () => {
     }
   }, [formData]);
 
-  useEffect(() => {
-    const stepErrors = validateStep(step, formData);
-    setErrors(stepErrors);
-  }, [step, formData]);
-
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -187,33 +155,15 @@ const App = () => {
               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                {isLoaded && !loadError ? (
-                  <Autocomplete
-                    onLoad={onLoad}
-                    onPlaceChanged={onPlaceChanged}
-                    restrictions={{ country: "nz" }}
-                  >
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      placeholder="Enter a New Zealand address"
-                      className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
-                    />
-                  </Autocomplete>
-                ) : (
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Enter a New Zealand address"
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
-                  />
-                )}
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Enter your address"
+                  className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+                />
               </div>
               {errors.address && <p className="mt-1 text-xs text-[#3582a1]">{errors.address}</p>}
             </div>
@@ -277,27 +227,6 @@ const App = () => {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Thank You!</h2>
           <p className="text-gray-600 mb-4">Your maintenance request has been submitted successfully.</p>
           <p className="text-gray-600">You will receive an email from Tapi within 30 minutes with further instructions.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <p className="text-xl font-semibold text-red-600">Error loading Google Maps</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-xl font-semibold">Loading Google Maps...</p>
         </div>
       </div>
     );
@@ -382,18 +311,6 @@ const App = () => {
           </div>
         )}
       </div>
-      <style jsx global>{`
-        .pac-container {
-          font-family: 'Inter', sans-serif;
-        }
-        .pac-container::after {
-          content: "Powered by Property Partner";
-          padding: 5px;
-          text-align: right;
-          font-size: 12px;
-          color: #666;
-        }
-      `}</style>
     </div>
   );
 };

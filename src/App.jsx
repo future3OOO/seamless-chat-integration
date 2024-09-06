@@ -78,7 +78,7 @@ const App = () => {
         Object.keys(formData).forEach(key => {
           if (key === 'images') {
             formData[key].forEach((image, index) => {
-              formDataToSend.append(`images[]`, image);
+              formDataToSend.append(`images`, image);
             });
           } else {
             formDataToSend.append(key, formData[key]);
@@ -261,7 +261,7 @@ const App = () => {
           </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderStep()}
           
           <div className="flex justify-between mt-6">
@@ -286,8 +286,7 @@ const App = () => {
               </button>
             ) : (
               <button
-                type="button"
-                onClick={handleSubmit}
+                type="submit"
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading || Object.keys(errors).length > 0}
               >

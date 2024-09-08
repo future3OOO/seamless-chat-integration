@@ -13,6 +13,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
   useEffect(() => {
     console.log('PropertyDetailsForm rendered');
     console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
+    console.log('Input field dimensions:', document.querySelector('input[name="address"]')?.getBoundingClientRect());
   }, []);
 
   const onLoad = (autocomplete) => {

@@ -13,6 +13,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
   useEffect(() => {
     console.log('PersonalInfoForm rendered');
     console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
+    console.log('Input field dimensions:', document.querySelector('input[name="full_name"]')?.getBoundingClientRect());
   }, []);
 
   return (

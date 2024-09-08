@@ -12,7 +12,7 @@ const ProgressIndicator = ({ step }) => {
   }, [step]);
 
   return (
-    <div className="mb-8 relative">
+    <div className="mb-8 relative w-full">
       <div className="flex justify-between items-center">
         {steps.map((label, index) => (
           <div key={index} className="flex flex-col items-center relative z-10">

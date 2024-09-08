@@ -144,21 +144,25 @@ const App = () => {
           <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center max-w-md">Let's get your issue resolved quickly and efficiently!</p>
         </div>
         
-        <ProgressIndicator step={step} />
+        <div className="desktop-full-width">
+          <ProgressIndicator step={step} />
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
           {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
           {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
           
-          <FormNavigation 
-            step={step} 
-            setStep={setStep} 
-            isStepValid={isStepValid} 
-            isLoading={isLoading} 
-            errors={errors} 
-            setIsSubmitClicked={setIsSubmitClicked} 
-          />
+          <div className="desktop-full-width">
+            <FormNavigation 
+              step={step} 
+              setStep={setStep} 
+              isStepValid={isStepValid} 
+              isLoading={isLoading} 
+              errors={errors} 
+              setIsSubmitClicked={setIsSubmitClicked} 
+            />
+          </div>
         </form>
         
         {errors.submit && (

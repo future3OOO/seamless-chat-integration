@@ -233,29 +233,6 @@ body {
   box-shadow: 0 0 0 3px rgba(53, 130, 161, 0.5);
 }
 
-@media (max-width: 768px) {
-  body {
-    font-size: 16px;
-  }
-
-  .input-field, .button {
-    min-height: 48px;
-  }
-
-  .form-section {
-    padding: 1rem;
-  }
-
-  .step-indicator .step-label {
-    font-size: 0.75rem;
-  }
-
-  .button {
-    width: 90%;
-    margin: 0 auto;
-  }
-}
-
 @media (min-width: 769px) {
   .form-container {
     max-width: 900px;
@@ -267,7 +244,7 @@ body {
   }
 
   .step-indicator {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto 2rem;
   }
   
@@ -291,6 +268,11 @@ body {
   .step-indicator .active {
     transform: scale(1.1);
     transition: transform 0.3s ease;
+  }
+
+  .desktop-full-width {
+    width: 100%;
+    max-width: 900px;
   }
 }
 

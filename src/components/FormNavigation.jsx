@@ -14,8 +14,8 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
   };
 
   return (
-    <div className="flex flex-col mt-8 space-y-4">
-      <div className="flex flex-col space-y-4">
+    <div className="flex flex-col mt-8 space-y-4 w-full">
+      <div className="flex flex-col space-y-4 w-full">
         {step < 3 ? (
           <button 
             type="button" 

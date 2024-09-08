@@ -11,7 +11,6 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
   }, [formData.address]);
 
   const onLoad = (autocomplete) => {
-    console.log('Autocomplete loaded:', autocomplete);
     autocompleteRef.current = autocomplete;
   };
 
@@ -21,15 +20,13 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
       let formattedAddress = place.formatted_address;
       formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
       handleChange({ target: { name: 'address', value: formattedAddress } });
-    } else {
-      console.warn('Autocomplete is not loaded yet!');
     }
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 w-full max-w-2xl mx-auto">
+    <div className="space-y-6 w-full max-w-2xl mx-auto">
       <div className="bg-white rounded-lg">
-        <label htmlFor="address" className="block text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3">
+        <label htmlFor="address" className="block text-lg font-semibold text-gray-700 mb-2">
           Address {!isAddressValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
@@ -50,7 +47,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
                   setIsAddressValid(e.target.value.trim().length > 0);
                 }}
                 placeholder="Enter a New Zealand address"
-                className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base sm:text-lg bg-gray-50 transition-all duration-200 ease-in-out"
+                className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out"
                 style={{ borderColor: '#3582a1' }}
                 required
               />
@@ -66,7 +63,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
                 setIsAddressValid(e.target.value.trim().length > 0);
               }}
               placeholder="Enter a New Zealand address"
-              className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base sm:text-lg bg-gray-50 transition-all duration-200 ease-in-out"
+              className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out"
               style={{ borderColor: '#3582a1' }}
               required
             />

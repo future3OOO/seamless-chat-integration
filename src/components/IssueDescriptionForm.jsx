@@ -12,8 +12,8 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     <>
       <h2 className="text-xl md:text-2xl font-bold mb-4">Issue Description</h2>
       <div className="space-y-6">
-        <div>
-          <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="bg-white p-4 rounded-md border border-gray-300 shadow-sm">
+          <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-2">
             Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
@@ -31,12 +31,12 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
         </div>
         <div className="bg-[#f0f7f9] p-4 rounded-md border border-[#3582a1]">
-          <h3 className="text-lg font-semibold mb-2 text-[#3582a1] flex items-center">
-            <Camera className="mr-2" size={20} />
-            Upload Photos (Recommended)
+          <h3 className="text-base font-semibold mb-2 text-[#3582a1] flex items-center">
+            <Camera className="mr-2" size={18} />
+            Upload Photos (Optional)
           </h3>
-          <p className="text-sm text-gray-600 mb-3">
-            Adding photos helps us understand and address your issue more quickly!
+          <p className="text-xs text-gray-600 mb-3">
+            Adding photos helps us understand and address your issue more quickly.
           </p>
           <div className="relative">
             <input
@@ -50,14 +50,14 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             />
             <label
               htmlFor="images"
-              className="flex items-center justify-center w-full px-4 py-3 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center w-full px-3 py-2 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
             >
-              <Upload className="mr-2 text-[#3582a1]" size={20} />
-              <span className="text-sm font-medium text-[#3582a1]">Choose photos to upload</span>
+              <Upload className="mr-2 text-[#3582a1]" size={16} />
+              <span className="text-sm font-medium text-[#3582a1]">Choose photos</span>
             </label>
           </div>
           {previewUrls.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-2">
               {previewUrls.map((url, index) => (
                 <div key={index} className="relative aspect-square">
                   <img
@@ -70,7 +70,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                     onClick={() => removeImage(index)}
                   >
-                    <Trash size={14} />
+                    <Trash size={12} />
                   </button>
                 </div>
               ))}

@@ -36,7 +36,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             Upload Photos (Recommended)
           </h3>
           <p className="text-sm text-gray-600 mb-3">
-            Adding photos helps us understand and address your issue more quickly. It's not required, but it's very helpful!
+            Adding photos helps us understand and address your issue more quickly!
           </p>
           <div className="relative">
             <input

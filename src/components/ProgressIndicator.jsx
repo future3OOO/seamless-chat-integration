@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const ProgressIndicator = ({ step }) => {
   const steps = ['Personal', 'Property', 'Issue'];
+
+  useEffect(() => {
+    console.log(`Current step: ${step}`);
+    console.log(`Progress line width: ${((step - 1) / (steps.length - 1)) * 100}%`);
+  }, [step]);
 
   return (
     <div className="mb-8">

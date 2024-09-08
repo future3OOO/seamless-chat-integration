@@ -5,10 +5,9 @@ import PersonalInfoForm from './components/PersonalInfoForm';
 import PropertyDetailsForm from './components/PropertyDetailsForm';
 import IssueDescriptionForm from './components/IssueDescriptionForm';
 import ProgressIndicator from './components/ProgressIndicator';
-import SubmitButton from './components/SubmitButton';
-import ThankYouMessage from './components/ThankYouMessage';
 import FormNavigation from './components/FormNavigation';
 import PoweredByLink from './components/PoweredByLink';
+import ThankYouMessage from './components/ThankYouMessage';
 
 const libraries = ['places'];
 
@@ -137,32 +136,30 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">
-      <div className="bg-white p-6 sm:p-8 md:p-10 rounded-lg shadow-lg w-full max-w-[900px] mx-auto">
+      <div className="bg-white p-6 sm:p-8 md:p-10 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
         <div className="flex flex-col items-center mb-8 sm:mb-10">
           <img src={Logo} alt="Logo" className="h-16 sm:h-20 w-auto object-contain mb-4" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center max-w-md">Let's get your issue resolved quickly and efficiently!</p>
         </div>
         
-        <div className="w-full max-w-[800px] mx-auto">
+        <div className="w-full max-w-2xl mx-auto">
           <ProgressIndicator step={step} />
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10 w-full max-w-[800px] mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10 w-full max-w-2xl mx-auto">
           {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
           {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
           {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
           
-          <div className="w-full">
-            <FormNavigation 
-              step={step} 
-              setStep={setStep} 
-              isStepValid={isStepValid} 
-              isLoading={isLoading} 
-              errors={errors} 
-              setIsSubmitClicked={setIsSubmitClicked} 
-            />
-          </div>
+          <FormNavigation 
+            step={step} 
+            setStep={setStep} 
+            isStepValid={isStepValid} 
+            isLoading={isLoading} 
+            errors={errors} 
+            setIsSubmitClicked={setIsSubmitClicked} 
+          />
         </form>
         
         {errors.submit && (

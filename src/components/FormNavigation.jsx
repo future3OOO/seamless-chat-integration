@@ -14,13 +14,13 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
   };
 
   return (
-    <div className="flex flex-col mt-8 space-y-4 w-full">
+    <div className="flex flex-col mt-8 space-y-4 w-full max-w-2xl mx-auto">
       <div className="flex flex-col space-y-4 w-full">
         {step < 3 ? (
           <button 
             type="button" 
             onClick={nextStep} 
-            className={`flex items-center justify-center px-6 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold w-full ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center px-6 py-4 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-all duration-300 text-base font-semibold w-full ${!isStepValid ? 'opacity-50 cursor-not-allowed' : 'shadow-md hover:shadow-lg hover:translate-y-[-2px]'}`}
             disabled={!isStepValid}
           >
             <span className="mr-2">Next</span>

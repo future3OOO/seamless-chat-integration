@@ -29,9 +29,9 @@ const ProgressIndicator = ({ step }) => {
         <div 
           className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
           style={{ 
-            width: `${((step - 1) / (steps.length - 1)) * 100}%`,
-            marginLeft: '5px',
-            marginRight: '5px'
+            width: `calc(${((step - 1) / (steps.length - 1)) * 100}% + 5px)`,
+            marginLeft: '20px',
+            marginRight: '20px'
           }}
         ></div>
       </div>

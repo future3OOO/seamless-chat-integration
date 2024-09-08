@@ -4,10 +4,10 @@ import { Send } from 'lucide-react';
 const SubmitButton = ({ isLoading, errors, setIsSubmitClicked, isDisabled }) => (
   <button
     type="submit"
-    className={`flex items-center justify-center px-6 py-4 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold w-full ${
+    className={`flex items-center justify-center px-6 py-5 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-all duration-300 text-base font-semibold w-full ${
       isDisabled || isLoading || Object.keys(errors).length > 0
         ? 'opacity-50 cursor-not-allowed'
-        : 'shadow-md hover:shadow-lg'
+        : 'shadow-md hover:shadow-lg hover:translate-y-[-2px]'
     }`}
     disabled={isDisabled || isLoading || Object.keys(errors).length > 0}
     onClick={() => setIsSubmitClicked(true)}

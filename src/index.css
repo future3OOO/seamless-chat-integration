@@ -16,8 +16,8 @@
 }
 
 @layer components {
-  .bg-gradient-to-br {
-    @apply bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)];
+  .gradient-background {
+    background-image: linear-gradient(to bottom right, var(--primary-color), var(--secondary-color));
   }
 
   .bg-pattern {

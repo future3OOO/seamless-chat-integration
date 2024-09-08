@@ -4,32 +4,23 @@ const ProgressIndicator = ({ step }) => {
   const steps = ['Personal', 'Property', 'Issue'];
 
   return (
-    <div className="mb-6">
-      <div className="flex justify-between mb-2">
+    <div className="mb-8">
+      <div className="flex justify-between items-center relative">
         {steps.map((label, index) => (
-          <div key={index} className="text-sm font-medium text-gray-500">
-            {label}
+          <div key={index} className="flex flex-col items-center relative z-10">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+              index + 1 <= step ? 'bg-[#3582a1] border-[#3582a1] text-white' : 'bg-white border-gray-300 text-gray-500'
+            } font-bold text-lg transition-all duration-300 ease-in-out`}>
+              {index + 1}
+            </div>
+            <div className="text-xs mt-2 font-medium text-gray-500">{label}</div>
           </div>
         ))}
-      </div>
-      <div className="relative pt-1">
-        <div className="flex mb-2 items-center justify-between">
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-[#3582a1] h-2 rounded-full transition-all duration-300 ease-in-out"
-              style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-        <div className="flex justify-between">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className={`w-6 h-6 rounded-full border-2 ${
-                index + 1 <= step ? 'bg-[#3582a1] border-[#3582a1]' : 'bg-white border-gray-300'
-              } -mt-3 transition-all duration-300 ease-in-out`}
-            ></div>
-          ))}
+        <div className="absolute top-5 left-0 h-1 bg-gray-300 w-full -z-10">
+          <div 
+            className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
+            style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+          ></div>
         </div>
       </div>
     </div>

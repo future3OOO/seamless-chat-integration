@@ -11,7 +11,7 @@ const ProgressIndicator = ({ step }) => {
     <div className="mb-8">
       <div className="flex justify-between items-center relative">
         {steps.map((s, index) => (
-          <div key={s.number} className="flex flex-col items-center relative z-10">
+          <div key={s.number} className="flex flex-col items-center relative z-10 w-1/3">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                 s.number <= step
@@ -28,7 +28,7 @@ const ProgressIndicator = ({ step }) => {
             </span>
             {index < steps.length - 1 && (
               <div
-                className={`absolute top-5 -right-1/2 w-full h-1 ${
+                className={`absolute top-5 left-1/2 w-full h-1 -translate-x-1/2 ${
                   s.number < step ? 'bg-[#3582a1]' : 'bg-gray-200'
                 }`}
               ></div>

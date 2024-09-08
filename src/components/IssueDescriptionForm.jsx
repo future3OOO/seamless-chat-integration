@@ -1,40 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FileText, Upload, Trash, Camera } from 'lucide-react';
 
 const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, removeImage }) => {
   const [isIssueValid, setIsIssueValid] = useState(false);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     setIsIssueValid(formData.issue.trim().length > 0);
   }, [formData.issue]);
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [formData.issue]);
+
+  const handleTextareaChange = (e) => {
+    handleChange(e);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl md:text-2xl font-bold mb-4">Issue Description</h2>
-      <div className="bg-white p-4 rounded-md border border-gray-300 shadow-sm">
-        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="space-y-4">
+      <h2 className="text-xl md:text-2xl font-bold mb-2">Issue Description</h2>
+      <div className="bg-white p-3 rounded-md border border-gray-300 shadow-sm">
+        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
           Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
           <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
           <textarea
+            ref={textareaRef}
             id="issue"
             name="issue"
             value={formData.issue}
-            onChange={handleChange}
+            onChange={handleTextareaChange}
             placeholder="Please provide details about your maintenance issue..."
-            className={`w-full pl-10 pr-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[200px] text-base ${errors.issue ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+            className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden ${errors.issue ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
             required
           ></textarea>
         </div>
         {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
       </div>
-      <div className="bg-[#f0f7f9] p-4 rounded-md border border-[#3582a1]">
-        <h3 className="text-sm font-semibold mb-2 text-[#3582a1] flex items-center">
-          <Camera className="mr-2" size={16} />
+      <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1]">
+        <h3 className="text-sm font-semibold mb-1 text-[#3582a1] flex items-center">
+          <Camera className="mr-1" size={14} />
           Upload Photos (Optional)
         </h3>
-        <p className="text-xs text-gray-600 mb-3">
+        <p className="text-xs text-gray-600 mb-2">
           Adding photos helps us understand and address your issue more quickly.
         </p>
         <div className="relative">
@@ -49,14 +66,14 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           />
           <label
             htmlFor="images"
-            className="flex items-center justify-center w-full px-3 py-2 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-full px-2 py-1 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
           >
-            <Upload className="mr-2 text-[#3582a1]" size={14} />
+            <Upload className="mr-1 text-[#3582a1]" size={12} />
             <span className="text-xs font-medium text-[#3582a1]">Choose photos</span>
           </label>
         </div>
         {previewUrls.length > 0 && (
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-2 grid grid-cols-4 gap-1">
             {previewUrls.map((url, index) => (
               <div key={index} className="relative aspect-square">
                 <img
@@ -66,10 +83,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
                 />
                 <button
                   type="button"
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
                   onClick={() => removeImage(index)}
                 >
-                  <Trash size={10} />
+                  <Trash size={8} />
                 </button>
               </div>
             ))}

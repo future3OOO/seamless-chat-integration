@@ -138,11 +138,11 @@ const App = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl min-h-[630px] transition-all duration-300">
-        <div className="flex items-center justify-between mb-6">
-          <img src={Logo} alt="Logo" className="h-16 w-auto object-contain" />
-          <h1 className="text-3xl font-bold text-[#3582a1]">Maintenance Request</h1>
+        <div className="flex flex-col items-center mb-8">
+          <img src={Logo} alt="Logo" className="h-20 w-auto object-contain mb-4" />
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Maintenance Request</h1>
+          <p className="text-lg text-gray-600">Let's get your issue resolved quickly and efficiently!</p>
         </div>
-        <p className="text-lg text-gray-600 mb-8">Let's get your issue resolved quickly and efficiently!</p>
         
         <ProgressIndicator step={step} />
         

@@ -5,6 +5,7 @@ import { useDropzone } from 'react-dropzone';
 const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, removeImage }) => {
   const [isIssueValid, setIsIssueValid] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -34,15 +35,23 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     }
   };
 
-  const onDrop = (acceptedFiles) => {
+  const onDrop = (acceptedFiles, rejectedFiles) => {
+    setUploadError('');
     const newImages = acceptedFiles.slice(0, 5 - formData.images.length);
     handleChange({ target: { name: 'images', files: newImages } });
+
+    if (rejectedFiles.length > 0) {
+      setUploadError('Some files were not accepted. Please ensure you are uploading image files (jpg, jpeg, png, gif).');
+    }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: 'image/*',
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif']
+    },
     maxFiles: 5 - formData.images.length,
+    maxSize: 5242880, // 5MB
   });
 
   return (
@@ -76,7 +85,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           Upload Photos (Recommended)
         </h3>
         <p className="text-base text-gray-600 mb-4">
-          Adding photos helps us understand and address your issue more quickly. (Max 5 images)
+          Adding photos helps us understand and address your issue more quickly. (Max 5 images, 5MB each)
         </p>
         {!isMobile ? (
           <div {...getRootProps()} className="dropzone">
@@ -99,10 +108,13 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
               type="file"
               accept="image/*"
               multiple
-              onChange={(e) => onDrop(Array.from(e.target.files))}
+              onChange={(e) => onDrop(Array.from(e.target.files), [])}
               className="hidden"
             />
           </div>
+        )}
+        {uploadError && (
+          <p className="text-red-500 mt-2">{uploadError}</p>
         )}
         {previewUrls.length > 0 && (
           <div className="mt-4 grid grid-cols-2 gap-4">

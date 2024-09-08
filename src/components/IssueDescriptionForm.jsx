@@ -40,13 +40,20 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             value={formData.issue}
             onChange={handleTextareaChange}
             placeholder="Please provide details about your maintenance issue..."
-            className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden ${errors.issue ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+            className="w-full max-w-[350px] mx-auto pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
+            style={{
+              width: '100%',
+              maxWidth: '350px',
+              minHeight: '100px',
+              height: 'auto',
+              overflowY: 'hidden'
+            }}
             required
           ></textarea>
         </div>
         {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
       </div>
-      <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1]">
+      <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1] max-w-[350px] mx-auto">
         <h3 className="text-sm font-semibold mb-1 text-[#3582a1] flex items-center">
           <Camera className="mr-1" size={14} />
           Upload Photos (Optional)

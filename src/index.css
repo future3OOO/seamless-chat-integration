@@ -32,8 +32,10 @@
     @apply animate-bounce;
   }
 
-  .transition-transform {
-    @apply transition-transform duration-150 ease-in-out;
+  .transition-transform-custom {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 
   .hover\:scale-105:hover {

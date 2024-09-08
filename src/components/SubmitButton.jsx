@@ -4,7 +4,7 @@ import { Send } from 'lucide-react';
 const SubmitButton = ({ isLoading, errors, setIsSubmitClicked, isDisabled }) => (
   <button
     type="submit"
-    className={`flex items-center justify-center w-full px-4 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold ${
+    className={`flex items-center justify-center px-6 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold ${
       isDisabled || isLoading || Object.keys(errors).length > 0
         ? 'opacity-50 cursor-not-allowed'
         : 'shadow-md hover:shadow-lg'
@@ -38,7 +38,7 @@ const SubmitButton = ({ isLoading, errors, setIsSubmitClicked, isDisabled }) => 
       </span>
     ) : (
       <>
-        <span className="mr-2">Submit Maintenance Request</span>
+        <span className="mr-2">Submit Request</span>
         <Send className="h-5 w-5 flex-shrink-0" />
       </>
     )}

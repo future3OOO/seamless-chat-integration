@@ -20,7 +20,9 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
     <>
       <h2 className="text-2xl font-bold mb-4">Property Details</h2>
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+          Address <span className="text-red-500">*</span>
+        </label>
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           {isLoaded ? (
@@ -37,6 +39,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
                 onChange={handleChange}
                 placeholder="Enter a New Zealand address"
                 className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+                required
               />
             </Autocomplete>
           ) : (
@@ -48,6 +51,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
               onChange={handleChange}
               placeholder="Enter a New Zealand address"
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+              required
             />
           )}
         </div>

@@ -12,7 +12,9 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
       <h2 className="text-2xl font-bold mb-4">Personal Information</h2>
       <div className="space-y-4">
         <div>
-          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name <span className="text-red-500">*</span>
+          </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -24,12 +26,15 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
               placeholder="John Doe"
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
               autoComplete="name"
+              required
             />
           </div>
           {errors.full_name && <p className="mt-1 text-xs text-[#3582a1]">{errors.full_name}</p>}
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -41,6 +46,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
               placeholder="john@example.com"
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
               autoComplete="email"
+              required
             />
           </div>
           {errors.email && <p className="mt-1 text-xs text-[#3582a1]">{errors.email}</p>}

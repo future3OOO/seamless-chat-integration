@@ -6,7 +6,9 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     <h2 className="text-2xl font-bold mb-4">Issue Description</h2>
     <div className="space-y-4">
       <div>
-        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">Describe Your Issue</label>
+        <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
+          Describe Your Issue <span className="text-red-500">*</span>
+        </label>
         <div className="relative">
           <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
           <textarea
@@ -16,6 +18,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             onChange={handleChange}
             placeholder="Please provide details about your maintenance issue..."
             className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] ${errors.issue ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+            required
           ></textarea>
         </div>
         {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}

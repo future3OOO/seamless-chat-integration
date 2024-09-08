@@ -14,14 +14,14 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
   };
 
   return (
-    <div className="flex justify-between items-center mt-8">
+    <div className="flex flex-col sm:flex-row justify-between items-center mt-8 space-y-4 sm:space-y-0">
       {step > 1 && (
         <button
           type="button"
           onClick={prevStep}
-          className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+          className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors text-sm sm:text-base"
         >
-          <ArrowLeft className="mr-2" size={18} />
+          <ArrowLeft className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Previous
         </button>
       )}
@@ -29,14 +29,14 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
         <button 
           type="button" 
           onClick={nextStep} 
-          className={`flex items-center px-6 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors ml-auto ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-sm sm:text-base ml-auto ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
           disabled={!isStepValid}
         >
           Next
-          <ArrowRight className="ml-2" size={18} />
+          <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
         </button>
       ) : (
-        <div className="w-full">
+        <div className="w-full sm:w-auto sm:ml-auto">
           <SubmitButton
             isLoading={isLoading}
             errors={errors}

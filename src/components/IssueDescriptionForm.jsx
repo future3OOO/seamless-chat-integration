@@ -32,7 +32,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
-          <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
+          <FileText className="absolute left-2 top-3 text-gray-400 md:left-3" size={18} />
           <textarea
             ref={textareaRef}
             id="issue"
@@ -40,7 +40,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             value={formData.issue}
             onChange={handleTextareaChange}
             placeholder="Describe your maintenance issue here..."
-            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
+            className="w-full pl-8 pr-2 py-2 md:pl-10 md:pr-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
             style={{
               width: '100%',
               minHeight: '100px',
@@ -55,7 +55,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
       <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1]">
         <h3 className="text-sm font-semibold mb-1 text-[#3582a1] flex items-center">
           <Camera className="mr-1" size={14} />
-          Upload Photos (Optional)
+          Upload Photos (Recommended)
         </h3>
         <p className="text-xs text-gray-600 mb-2">
           Adding photos helps us understand and address your issue more quickly.

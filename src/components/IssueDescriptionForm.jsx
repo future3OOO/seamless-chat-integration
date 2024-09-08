@@ -25,7 +25,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-[350px] mx-auto">
       <h2 className="text-xl md:text-2xl font-bold mb-2">Issue Description</h2>
       <div className="bg-white p-3 rounded-md border border-gray-300 shadow-sm">
         <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
@@ -39,8 +39,8 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             name="issue"
             value={formData.issue}
             onChange={handleTextareaChange}
-            placeholder="Please provide details about your maintenance issue..."
-            className="w-full max-w-[350px] mx-auto pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
+            placeholder="I need help with my maintenance"
+            className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
             style={{
               width: '100%',
               maxWidth: '350px',
@@ -53,7 +53,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
         </div>
         {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
       </div>
-      <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1] max-w-[350px] mx-auto">
+      <div className="bg-[#f0f7f9] p-3 rounded-md border border-[#3582a1]">
         <h3 className="text-sm font-semibold mb-1 text-[#3582a1] flex items-center">
           <Camera className="mr-1" size={14} />
           Upload Photos (Optional)

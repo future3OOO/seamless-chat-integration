@@ -1,24 +1,26 @@
-import os
-import uuid
-import logging
-from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
+import subprocess
+import os
+import logging
+from PIL import Image  # Import Pillow for image manipulation
+from urllib.parse import unquote
+import sys
+import io
+
+# Ensure stdout and stderr are UTF-8 encoded to handle special characters
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 
 # Configure logging
-logging.basicConfig(
-    filename='app.log',
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Get the absolute path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Set up Flask app with explicit template and static folder paths
-app = Flask(__name__, 
-            static_folder=os.path.join(current_dir, 'build'),
+app = Flask(__name__,
+            static_folder=os.path.join(current_dir, 'dist'),
             static_url_path='',
             template_folder=os.path.join(current_dir, 'templates'))
 CORS(app)  # Enable CORS for all routes
@@ -26,105 +28,121 @@ CORS(app)  # Enable CORS for all routes
 # Set the upload folder path
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
-# Ensure the uploads folder exists
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+    logging.info(f"Created upload folder: {UPLOAD_FOLDER}")
 
-@app.route('/', defaults={'path': ''})
+# Route to serve index.html at '/'
+@app.route('/')
+def serve_index():
+    logging.debug("Serving index.html for root path")
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Route to serve tapi.html at '/tapi.html'
+@app.route('/tapi.html')
+def serve_tapi():
+    logging.debug("Rendering tapi.html template")
+    return render_template('tapi.html')
+
+# Route to serve static files
 @app.route('/<path:path>')
-def serve(path):
-    if path == "tapi.html":
-        return render_template('tapi.html')
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
+def serve_static(path):
+    logging.debug(f"Received request for path: {path}")
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        logging.debug(f"Serving file from static folder: {path}")
         return send_from_directory(app.static_folder, path)
     else:
-        return send_from_directory(app.static_folder, 'index.html')
+        logging.debug(f"Path not found: {path}")
+        return "Not Found", 404
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    logging.debug("Received POST request to /submit")
     try:
-        logging.debug(f"Received POST request to /submit")
-        logging.debug(f"Request form data: {request.form}")
-        logging.debug(f"Request files: {request.files}")
+        # Get form data and decode special characters
+        full_name = unquote(request.form.get('full_name', ''))
+        address = unquote(request.form.get('address', ''))
+        email = unquote(request.form.get('email', ''))
+        issue = unquote(request.form.get('issue', ''))
+        images = request.files.getlist('images')  # Get multiple images
 
-        full_name = request.form.get('full_name')
-        address = request.form.get('address')
-        email = request.form.get('email')
-        issue = request.form.get('issue')
+        # Log the received data (for debugging)
+        logging.debug(f"Received form data: full_name={full_name}, address={address}, email={email}, issue={issue}")
+        logging.debug(f"Number of images received: {len(images)}")
+
+        # Save the images if they exist
+        saved_image_paths = []
+        for image in images:
+            if image:
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+                image.save(image_path)
+                saved_image_paths.append(image_path)
+                logging.debug(f"Image saved: {image_path}")
+
+        # Combine images into a single file if more than one image is uploaded
+        combined_image_path = None
+        if len(saved_image_paths) > 1:
+            combined_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'combined_image.jpg')
+            combine_images(saved_image_paths, combined_image_path)
+            logging.debug(f"Combined image saved: {combined_image_path}")
+        elif len(saved_image_paths) == 1:
+            combined_image_path = saved_image_paths[0]  # If only one image, no need to combine
+
+        # Prepare the command to run the Selenium script
+        command = ['python', 'selenium_script.py', full_name, address, email, issue]
         
-        logging.debug(f"Processed form data: {full_name}, {address}, {email}, {issue}")
+        if combined_image_path:  # Only append the image path if an image was uploaded
+            command.append(combined_image_path)
         
-        # Handle multiple image files
-        uploaded_files = request.files.getlist("images[]")
-        logging.debug(f"Number of files received: {len(uploaded_files)}")
+        logging.debug(f"Executing command: {' '.join(command)}")
+
+        # Run the Selenium script asynchronously
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
-        file_paths = []
-        
-        for file in uploaded_files:
-            if file and file.filename:
-                logging.debug(f"Processing file: {file.filename}")
-                # Generate a unique filename
-                original_filename = secure_filename(file.filename)
-                unique_filename = f"{uuid.uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{original_filename}"
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-                
-                try:
-                    file.save(file_path)
-                    if os.path.exists(file_path):
-                        file_size = os.path.getsize(file_path)
-                        file_paths.append(file_path)
-                        logging.info(f"File saved successfully: {file_path}, Size: {file_size} bytes")
-                    else:
-                        logging.error(f"File not found after save attempt: {file_path}")
-                except Exception as e:
-                    logging.error(f"Error saving file {unique_filename}: {str(e)}")
-        
-        if not file_paths:
-            logging.warning("No files were successfully uploaded and saved.")
-        
-        return jsonify({
-            "message": "Form submitted successfully!",
-            "files": file_paths,
-            "form_data": {
-                "full_name": full_name,
-                "address": address,
-                "email": email,
-                "issue": issue
-            }
-        }), 200
+        # Wait for the process to complete and handle the output
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            logging.error(f"Selenium script failed: {stderr.decode('utf-8')}")
+            return jsonify({"error": "Selenium script execution failed"}), 500
+
+        logging.debug("Selenium script started successfully")
+        return jsonify({"message": "Form submitted successfully! Selenium script is now processing."}), 200
+
     except Exception as e:
         logging.exception("An error occurred while processing the form submission")
         return jsonify({"error": str(e)}), 400
 
-@app.route('/test-upload', methods=['GET', 'POST'])
-def test_upload():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'No file part', 400
-        file = request.files['file']
-        if file.filename == '':
-            return 'No selected file', 400
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            try:
-                file.save(file_path)
-                return f'File uploaded successfully to {file_path}', 200
-            except Exception as e:
-                return f'Error saving file: {str(e)}', 500
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+@app.route('/submit', methods=['OPTIONS'])
+def handle_options():
+    response = app.make_default_options_response()
+    response.headers['Access-Control-Allow-Methods'] = 'POST'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
+
+def combine_images(image_paths, output_path):
+    """Combine two images into one."""
+    images = [Image.open(img) for img in image_paths]
+
+    # Get the total width and height for the new image
+    total_width = max(img.width for img in images)
+    total_height = sum(img.height for img in images)
+
+    # Create a new blank image with the total size
+    combined_image = Image.new('RGB', (total_width, total_height))
+
+    # Paste each image into the new blank image
+    y_offset = 0
+    for img in images:
+        combined_image.paste(img, (0, y_offset))
+        y_offset += img.height
+
+    # Save the combined image
+    combined_image.save(output_path)
 
 if __name__ == '__main__':
-    # Create necessary folders
+    # Ensure necessary folders exist
     for folder in [UPLOAD_FOLDER, os.path.join(current_dir, 'templates'), os.path.join(current_dir, 'build')]:
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -146,8 +164,8 @@ if __name__ == '__main__':
         logging.info("Copied index.html to the build folder")
     
     port = 5000
-    host = '0.0.0.0'  # Changed from 'localhost' to '0.0.0.0' to allow external access
+    host = 'localhost'
     logging.info(f"Starting Flask server on {host}:{port}")
-    logging.info(f"Access the React app at: http://localhost:{port}")
-    logging.info(f"Access the tapi.html page at: http://localhost:{port}/tapi.html")
+    logging.info(f"Access the React app at: http://{host}:{port}")
+    logging.info(f"Access the tapi.html page at: http://{host}:{port}/tapi.html")
     app.run(debug=True, host=host, port=port)

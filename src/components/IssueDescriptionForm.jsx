@@ -25,10 +25,9 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   };
 
   return (
-    <div className="space-y-8 w-full max-w-3xl mx-auto">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Issue Description</h2>
-      <div className="bg-white rounded-lg shadow-sm">
-        <label htmlFor="issue" className="block text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3 px-4 pt-4">
+    <div className="space-y-10 w-full max-w-3xl mx-auto">
+      <div className="bg-white rounded-lg">
+        <label htmlFor="issue" className="block text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3">
           Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
@@ -49,7 +48,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             required
           ></textarea>
         </div>
-        {errors.issue && <p className="mt-2 text-sm text-red-600 px-4">{errors.issue}</p>}
+        {errors.issue && <p className="mt-2 text-sm text-red-600">{errors.issue}</p>}
       </div>
       <div className="bg-[#f0f7f9] p-4 sm:p-6 rounded-lg border-2 border-[#3582a1]">
         <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-[#3582a1] flex items-center">

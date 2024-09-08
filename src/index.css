@@ -49,38 +49,6 @@ body {
   transform: scale(1.05);
 }
 
-.step-indicator {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.step-indicator .step {
-  width: 33.33%;
-  height: 0.5rem;
-  position: relative;
-}
-
-.step-indicator .step-label {
-  position: absolute;
-  top: -1.75rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.875rem;
-  white-space: nowrap;
-}
-
-.step-indicator .active {
-  background-color: var(--primary-color);
-  color: var(--primary-color);
-}
-
-.step-indicator .inactive {
-  background-color: #e2e8f0;
-  color: #a0aec0;
-}
-
 .form-section {
   background-color: white;
   padding: 1.5rem;
@@ -235,17 +203,12 @@ body {
 
 @media (min-width: 769px) {
   .form-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
   .button {
     min-height: 54px;
-  }
-
-  .step-indicator {
-    max-width: 800px;
-    margin: 0 auto 2rem;
   }
   
   .form-group label,
@@ -256,18 +219,9 @@ body {
   
   .submit-button {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     height: 60px;
     font-size: 20px;
-  }
-  
-  .step-indicator .step {
-    height: 0.75rem;
-  }
-  
-  .step-indicator .active {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
   }
 }
 

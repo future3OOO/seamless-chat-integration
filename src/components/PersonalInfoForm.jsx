@@ -25,7 +25,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             value={formData.full_name}
             onChange={handleChange}
             placeholder="John Doe"
-            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out"
+            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
             style={{ borderColor: '#3582a1' }}
             autoComplete="name"
             required
@@ -46,7 +46,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="john@example.com"
-            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out"
+            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
             style={{ borderColor: '#3582a1' }}
             autoComplete="email"
             required

@@ -40,10 +40,10 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
           <button
             type="button"
             onClick={prevStep}
-            className="flex items-center justify-center px-4 py-2 bg-transparent text-gray-500 rounded-full hover:bg-gray-100 transition-colors text-sm font-medium w-full"
+            className="flex items-center justify-center px-4 py-2 bg-transparent text-gray-500 hover:bg-gray-100 transition-colors text-sm font-medium w-full rounded-full"
           >
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Previous
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            <span>Previous</span>
           </button>
         )}
       </div>

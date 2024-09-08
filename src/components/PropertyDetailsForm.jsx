@@ -10,6 +10,11 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
     setIsAddressValid(formData.address.trim().length > 0);
   }, [formData.address]);
 
+  useEffect(() => {
+    console.log('PropertyDetailsForm rendered');
+    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
+  }, []);
+
   const onLoad = (autocomplete) => {
     autocompleteRef.current = autocomplete;
   };

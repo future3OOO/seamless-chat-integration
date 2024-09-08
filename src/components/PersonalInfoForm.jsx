@@ -10,6 +10,11 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
     setIsEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email));
   }, [formData.full_name, formData.email]);
 
+  useEffect(() => {
+    console.log('PersonalInfoForm rendered');
+    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
+  }, []);
+
   return (
     <div className="space-y-6 w-full max-w-2xl mx-auto">
       <div className="bg-white rounded-lg">

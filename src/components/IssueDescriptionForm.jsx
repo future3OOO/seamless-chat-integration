@@ -16,6 +16,11 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     }
   }, [formData.issue]);
 
+  useEffect(() => {
+    console.log('IssueDescriptionForm rendered');
+    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
+  }, []);
+
   const handleTextareaChange = (e) => {
     handleChange(e);
     if (textareaRef.current) {

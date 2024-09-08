@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Upload, Trash } from 'lucide-react';
+import { FileText, Upload, Trash, Camera } from 'lucide-react';
 
 const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, removeImage }) => {
   const [isIssueValid, setIsIssueValid] = useState(false);
@@ -11,7 +11,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   return (
     <>
       <h2 className="text-xl md:text-2xl font-bold mb-4">Issue Description</h2>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
           <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
             Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
@@ -30,8 +30,14 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           </div>
           {errors.issue && <p className="mt-1 text-xs text-[#3582a1]">{errors.issue}</p>}
         </div>
-        <div>
-          <label htmlFor="images" className="block text-sm font-medium text-gray-700 mb-2">Upload Images</label>
+        <div className="bg-[#f0f7f9] p-4 rounded-md border border-[#3582a1]">
+          <h3 className="text-lg font-semibold mb-2 text-[#3582a1] flex items-center">
+            <Camera className="mr-2" size={20} />
+            Upload Photos (Recommended)
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            Adding photos helps us understand and address your issue more quickly. It's not required, but it's very helpful!
+          </p>
           <div className="relative">
             <input
               type="file"
@@ -44,10 +50,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             />
             <label
               htmlFor="images"
-              className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center w-full px-4 py-3 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
             >
-              <Upload className="mr-2 text-gray-400" size={20} />
-              <span className="text-sm font-medium text-gray-700">Choose files</span>
+              <Upload className="mr-2 text-[#3582a1]" size={20} />
+              <span className="text-sm font-medium text-[#3582a1]">Choose photos to upload</span>
             </label>
           </div>
           {previewUrls.length > 0 && (

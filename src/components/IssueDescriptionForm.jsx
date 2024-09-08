@@ -39,8 +39,8 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             name="issue"
             value={formData.issue}
             onChange={handleTextareaChange}
-            placeholder="Describe your maintenance issue here..."
-            className="w-full pl-8 pr-2 py-1 md:pl-10 md:pr-3 md:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[80px] text-base resize-none overflow-hidden"
+            placeholder="I need help with my maintenance"
+            className="w-full pl-7 pr-2 py-1 md:pl-10 md:pr-3 md:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[80px] text-sm md:text-base resize-none overflow-hidden"
             style={{
               width: '100%',
               minHeight: '80px',
@@ -72,10 +72,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           />
           <label
             htmlFor="images"
-            className="flex items-center justify-center w-full px-4 py-2 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-full px-4 py-3 border border-[#3582a1] rounded-md cursor-pointer bg-white hover:bg-gray-50 transition-colors"
           >
-            <Upload className="mr-2 text-[#3582a1]" size={18} />
-            <span className="text-sm font-medium text-[#3582a1]">Choose photos</span>
+            <Upload className="mr-2 text-[#3582a1]" size={20} />
+            <span className="text-base font-medium text-[#3582a1]">Choose photos</span>
           </label>
         </div>
         {previewUrls.length > 0 && (

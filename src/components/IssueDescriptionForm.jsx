@@ -59,11 +59,11 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           {previewUrls.length > 0 && (
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
               {previewUrls.map((url, index) => (
-                <div key={index} className="relative">
+                <div key={index} className="relative aspect-square">
                   <img
                     src={url}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-md"
+                    className="w-full h-full object-cover rounded-md"
                   />
                   <button
                     type="button"

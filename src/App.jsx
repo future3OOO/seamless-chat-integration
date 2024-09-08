@@ -14,8 +14,7 @@ const libraries = ['places'];
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    full_name: '',
     email: '',
     address: '',
     issue: '',
@@ -82,8 +81,6 @@ const App = () => {
           formData[key].forEach((image) => {
             formDataToSend.append('images', image);
           });
-        } else if (key === 'first_name' || key === 'last_name') {
-          formDataToSend.append('full_name', `${formData.first_name} ${formData.last_name}`);
         } else {
           formDataToSend.append(key, formData[key]);
         }

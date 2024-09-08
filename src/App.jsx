@@ -136,18 +136,18 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4 bg-pattern">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
         <div className="flex flex-col items-center mb-6">
-          <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-4" />
+          <img src={Logo} alt="Logo" className="h-12 w-auto object-contain mb-4" />
           <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>
-          <p className="text-base text-gray-600 text-center max-w-md">Let's get your issue resolved quickly and efficiently!</p>
+          <p className="text-sm text-gray-600 text-center max-w-xs">Let's get your issue resolved quickly and efficiently!</p>
         </div>
         
-        <div className="w-full max-w-2xl mx-auto mb-6">
+        <div className="w-full mb-6">
           <ProgressIndicator step={step} />
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
           {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
           {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
@@ -163,7 +163,7 @@ const App = () => {
         </form>
         
         {errors.submit && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md">
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
             {errors.submit}
           </div>
         )}

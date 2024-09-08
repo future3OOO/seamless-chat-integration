@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 
 const ProgressIndicator = ({ step }) => {
   const steps = ['Personal', 'Property', 'Issue'];
-  const lineColor = '#3582a1';
+  const activeColor = '#2a6a84';
+  const completedColor = '#3582a1';
+  const inactiveColor = '#e2e8f0';
 
   useEffect(() => {
     const lineWidth = ((step - 1) / (steps.length - 1)) * 100;
     console.log(`Current step: ${step}`);
-    console.log(`Progress line color: ${lineColor}`);
     console.log(`Progress line width: ${lineWidth}%`);
   }, [step]);
 
@@ -16,24 +17,38 @@ const ProgressIndicator = ({ step }) => {
       <div className="flex justify-between items-center">
         {steps.map((label, index) => (
           <div key={index} className="flex flex-col items-center relative z-10">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-              index + 1 === step ? 'bg-[#2a6a84] text-white scale-110 shadow-md' :
-              index + 1 < step ? 'bg-[#3582a1] text-white' : 'bg-white border-2 border-[#3582a1] text-[#3582a1]'
-            } font-bold text-xl transition-all duration-300 ease-in-out`}>
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl transition-all duration-300 ease-in-out ${
+                index + 1 === step
+                  ? 'bg-[#2a6a84] scale-110 shadow-md'
+                  : index + 1 < step
+                  ? 'bg-[#3582a1]'
+                  : 'bg-[#e2e8f0]'
+              }`}
+            >
               {index + 1}
             </div>
-            <div className={`text-sm mt-2 font-medium ${index + 1 === step ? 'text-[#2a6a84] font-bold' : 'text-gray-500'}`}>{label}</div>
+            <div
+              className={`text-sm mt-2 font-medium transition-all duration-300 ${
+                index + 1 === step ? 'text-[#2a6a84] font-bold' : 'text-gray-500'
+              }`}
+            >
+              {label}
+            </div>
           </div>
         ))}
       </div>
-      <div className="absolute top-7 left-0 right-0 h-2 bg-gray-300" style={{ 
-        zIndex: 0,
-        left: '28px',
-        right: '28px',
-      }}>
-        <div 
+      <div
+        className="absolute top-8 left-0 right-0 h-2 bg-[#e2e8f0]"
+        style={{
+          zIndex: 0,
+          left: '32px',
+          right: '32px',
+        }}
+      >
+        <div
           className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
-          style={{ 
+          style={{
             width: `${((step - 1) / (steps.length - 1)) * 100}%`,
           }}
         ></div>

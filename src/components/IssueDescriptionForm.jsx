@@ -25,10 +25,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   };
 
   return (
-    <div className="space-y-8 w-full max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Issue Description</h2>
+    <div className="space-y-6 sm:space-y-8 w-full max-w-3xl mx-auto">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Issue Description</h2>
       <div className="bg-white rounded-lg shadow-sm">
-        <label htmlFor="issue" className="block text-xl font-semibold text-gray-700 mb-3 px-4 pt-4">
+        <label htmlFor="issue" className="block text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3 px-4 pt-4">
           Describe Your Issue {!isIssueValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
@@ -40,11 +40,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             value={formData.issue}
             onChange={handleTextareaChange}
             placeholder="Describe your maintenance issue here"
-            className="w-full pl-14 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] min-h-[150px] text-base resize-none overflow-hidden bg-gray-50 transition-all duration-200 ease-in-out"
+            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] min-h-[150px] text-base sm:text-lg resize-none overflow-hidden bg-gray-50 transition-all duration-200 ease-in-out"
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               lineHeight: '1.5',
-              fontSize: '16px',
               borderColor: '#3582a1',
             }}
             required
@@ -52,12 +51,12 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
         </div>
         {errors.issue && <p className="mt-2 text-sm text-red-600 px-4">{errors.issue}</p>}
       </div>
-      <div className="bg-[#f0f7f9] p-6 rounded-lg border-2 border-[#3582a1]">
-        <h3 className="text-xl font-semibold mb-4 text-[#3582a1] flex items-center">
+      <div className="bg-[#f0f7f9] p-4 sm:p-6 rounded-lg border-2 border-[#3582a1]">
+        <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-[#3582a1] flex items-center">
           <Camera className="mr-3 text-[#3582a1]" size={24} />
           Upload Photos (Recommended)
         </h3>
-        <p className="text-base text-gray-600 mb-6">
+        <p className="text-base text-gray-600 mb-4 sm:mb-6">
           Adding photos helps us understand and address your issue more quickly.
         </p>
         <div className="relative">
@@ -72,14 +71,14 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           />
           <label
             htmlFor="images"
-            className="flex items-center justify-center w-full px-6 py-4 border-2 border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-full px-4 sm:px-6 py-3 sm:py-4 border-2 border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
           >
             <Upload className="mr-3 text-[#3582a1]" size={24} />
-            <span className="text-lg font-medium text-[#3582a1]">Choose photos</span>
+            <span className="text-base sm:text-lg font-medium text-[#3582a1]">Choose photos</span>
           </label>
         </div>
         {previewUrls.length > 0 && (
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div className="mt-4 sm:mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
             {previewUrls.map((url, index) => (
               <div key={index} className="relative aspect-square">
                 <img

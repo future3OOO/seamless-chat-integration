@@ -16,20 +16,20 @@ const ProgressIndicator = ({ step }) => {
       <div className="flex justify-between items-center">
         {steps.map((label, index) => (
           <div key={index} className="flex flex-col items-center relative z-10">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
               index + 1 === step ? 'bg-[#2a6a84] text-white scale-110 shadow-md' :
               index + 1 < step ? 'bg-[#3582a1] text-white' : 'bg-white border-2 border-[#3582a1] text-[#3582a1]'
-            } font-bold text-lg transition-all duration-300 ease-in-out`}>
+            } font-bold text-xl transition-all duration-300 ease-in-out`}>
               {index + 1}
             </div>
-            <div className={`text-xs mt-2 font-medium ${index + 1 === step ? 'text-[#2a6a84] font-bold' : 'text-gray-500'}`}>{label}</div>
+            <div className={`text-sm mt-2 font-medium ${index + 1 === step ? 'text-[#2a6a84] font-bold' : 'text-gray-500'}`}>{label}</div>
           </div>
         ))}
       </div>
-      <div className="absolute top-6 left-0 right-0 h-1 bg-gray-300" style={{ 
+      <div className="absolute top-7 left-0 right-0 h-2 bg-gray-300" style={{ 
         zIndex: 0,
-        left: '24px',
-        right: '24px',
+        left: '28px',
+        right: '28px',
       }}>
         <div 
           className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"

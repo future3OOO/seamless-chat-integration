@@ -25,7 +25,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   };
 
   return (
-    <div className="space-y-4 max-w-[350px] mx-auto">
+    <div className="space-y-4 w-full max-w-3xl mx-auto">
       <h2 className="text-xl md:text-2xl font-bold mb-2">Issue Description</h2>
       <div className="bg-white p-3 rounded-md border border-gray-300 shadow-sm">
         <label htmlFor="issue" className="block text-sm font-medium text-gray-700 mb-1">
@@ -39,11 +39,10 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             name="issue"
             value={formData.issue}
             onChange={handleTextareaChange}
-            placeholder="I need help with my maintenance"
+            placeholder="Describe your maintenance issue here..."
             className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] min-h-[100px] text-base resize-none overflow-hidden"
             style={{
               width: '100%',
-              maxWidth: '350px',
               minHeight: '100px',
               height: 'auto',
               overflowY: 'hidden'

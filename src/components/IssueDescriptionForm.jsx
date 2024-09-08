@@ -39,7 +39,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             value={formData.issue}
             onChange={handleTextareaChange}
             placeholder="Describe your maintenance issue here"
-            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:ring-2 focus:ring-[#3582a1] focus:border-[#3582a1] min-h-[150px] text-base resize-none overflow-hidden bg-gray-50 transition-all duration-200 ease-in-out"
+            className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] min-h-[150px] text-base resize-none overflow-hidden bg-gray-50 transition-all duration-200 ease-in-out outline-none"
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               lineHeight: '1.5',

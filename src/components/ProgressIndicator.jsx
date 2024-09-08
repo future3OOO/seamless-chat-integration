@@ -12,8 +12,8 @@ const ProgressIndicator = ({ step }) => {
   }, [step]);
 
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-center relative">
+    <div className="mb-8 relative">
+      <div className="flex justify-between items-center">
         {steps.map((label, index) => (
           <div key={index} className="flex flex-col items-center relative z-10">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
@@ -24,12 +24,12 @@ const ProgressIndicator = ({ step }) => {
             <div className="text-xs mt-2 font-medium text-gray-500">{label}</div>
           </div>
         ))}
-        <div className="absolute top-5 left-0 h-1 bg-gray-300 w-full -z-10">
-          <div 
-            className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
-            style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-          ></div>
-        </div>
+      </div>
+      <div className="absolute top-5 left-0 h-1 bg-gray-300 w-full" style={{ zIndex: 0 }}>
+        <div 
+          className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
+          style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+        ></div>
       </div>
     </div>
   );

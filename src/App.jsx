@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
 import PersonalInfoForm from './components/PersonalInfoForm';
@@ -26,6 +26,8 @@ const App = () => {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
+  const [dynamicPadding, setDynamicPadding] = useState(0);
+  const containerRef = useRef(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -80,6 +82,20 @@ const App = () => {
   useEffect(() => {
     validateStep();
   }, [validateStep]);
+
+  useEffect(() => {
+    const updatePadding = () => {
+      if (containerRef.current) {
+        const containerTop = containerRef.current.getBoundingClientRect().top;
+        const newPadding = Math.max(0, (window.innerHeight - containerTop - 600) / 2);
+        setDynamicPadding(newPadding);
+      }
+    };
+
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -136,7 +152,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] py-8 px-4 sm:py-12 bg-pattern">
-      <div className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto flex flex-col" style={{ height: '90vh' }}>
+      <div ref={containerRef} className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto flex flex-col" style={{ paddingTop: `${dynamicPadding}px`, paddingBottom: `${dynamicPadding}px` }}>
         <div className="flex flex-col items-center mb-4">
           <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-2" />
           <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">Maintenance Request</h1>

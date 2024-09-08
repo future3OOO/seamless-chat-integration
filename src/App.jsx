@@ -1,7 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
-import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight, Trash } from 'lucide-react'; // Imported Trash icon for delete functionality
+import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight } from 'lucide-react';
+
+const GOOGLE_MAPS_API_KEY = 'AIzaSyD9mK1jRtZAOGBohiiiMHv72TFzIsjbfNc';
 
 const libraries = ['places'];
 
@@ -39,10 +41,9 @@ const App = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [autocomplete, setAutocomplete] = useState(null);
   const [previewUrls, setPreviewUrls] = useState([]);
-  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries,
   });
 
@@ -73,8 +74,6 @@ const App = () => {
       
       const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
       setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
-
-      console.log('Images selected:', newImages);
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -83,36 +82,20 @@ const App = () => {
     }
   }, []);
 
-  const removeImage = useCallback((index) => {
-    const newImages = formData.images.filter((_, i) => i !== index);
-    const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
-
-    setFormData(prevState => ({
-      ...prevState,
-      images: newImages
-    }));
-    setPreviewUrls(newPreviewUrls);
-  }, [formData.images, previewUrls]);
-
   const nextStep = useCallback(() => {
     const stepErrors = validateStep(step, formData);
     setErrors(stepErrors);
     if (Object.keys(stepErrors).length === 0) {
       setStep(prevStep => Math.min(prevStep + 1, 3));
     }
-    setIsSubmitClicked(false); // Reset submit click when changing steps
   }, [step, formData]);
 
   const prevStep = useCallback(() => {
     setStep(prevStep => Math.max(prevStep - 1, 1));
-    setIsSubmitClicked(false); // Reset submit click when changing steps
   }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-  
-    if (!isSubmitClicked) return;
-  
     const stepErrors = validateStep(3, formData);
     setErrors(stepErrors);
     if (Object.keys(stepErrors).length === 0) {
@@ -121,20 +104,19 @@ const App = () => {
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
           if (key === 'images') {
-            formData[key].forEach((image) => {
-              formDataToSend.append('images', image);
+            formData[key].forEach((image, index) => {
+              formDataToSend.append(`images[]`, image);
             });
           } else {
-            // No need to encode, just append as-is
             formDataToSend.append(key, formData[key]);
           }
         });
-  
+
         const response = await fetch('http://localhost:5000/submit', {
           method: 'POST',
           body: formDataToSend,
         });
-  
+
         if (response.ok) {
           setIsSubmitted(true);
         } else {
@@ -148,7 +130,7 @@ const App = () => {
         setIsLoading(false);
       }
     }
-  }, [formData, isSubmitClicked]);
+  }, [formData]);
 
   useEffect(() => {
     const stepErrors = validateStep(step, formData);
@@ -274,20 +256,7 @@ const App = () => {
                 {previewUrls.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {previewUrls.map((url, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          className="w-24 h-24 object-cover rounded-md"
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                          onClick={() => removeImage(index)}
-                        >
-                          <Trash size={14} />
-                        </button>
-                      </div>
+                      <img key={index} src={url} alt={`Preview ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
                     ))}
                   </div>
                 )}
@@ -336,7 +305,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl min-h-[630px] transition-all duration-300">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl">
         <div className="flex justify-center mb-6">
           <img src={Logo} alt="Logo" className="w-32 h-32 mx-auto object-contain" />
         </div>
@@ -363,7 +332,7 @@ const App = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
           {renderStep()}
           
           <div className="flex justify-between mt-6">
@@ -388,10 +357,10 @@ const App = () => {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading || Object.keys(errors).length > 0}
-                onClick={() => setIsSubmitClicked(true)}
               >
                 {isLoading ? (
                   <>
@@ -401,7 +370,7 @@ const App = () => {
                     </svg>
                     Submitting...
                   </>
-                ) : 'Submit Maintenance Request'}
+                ) : 'Submit Request'}
               </button>
             )}
           </div>
@@ -413,6 +382,18 @@ const App = () => {
           </div>
         )}
       </div>
+      <style jsx global>{`
+        .pac-container {
+          font-family: 'Inter', sans-serif;
+        }
+        .pac-container::after {
+          content: "Powered by Property Partner";
+          padding: 5px;
+          text-align: right;
+          font-size: 12px;
+          color: #666;
+        }
+      `}</style>
     </div>
   );
 };

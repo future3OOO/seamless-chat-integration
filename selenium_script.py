@@ -6,26 +6,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import logging
 import time
-from urllib.parse import unquote
-import io
-
-# Ensure stdout and stderr are set to UTF-8 to handle special characters
-sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Decode the command-line arguments using unquote to handle special characters
-full_name = unquote(sys.argv[1])
-address = unquote(sys.argv[2])
-email = unquote(sys.argv[3])
-issue = unquote(sys.argv[4])
+# Get the command-line arguments
+full_name = sys.argv[1]
+address = sys.argv[2]
+email = sys.argv[3]
+issue = sys.argv[4]
 
-# Check if an image path is provided and decode it as well
+# Check if an image path is provided
 image_path = None
 if len(sys.argv) > 5:
-    image_path = unquote(sys.argv[5])
+    image_path = sys.argv[5]
 
 # Print received arguments for debugging
 print(f"Received arguments: full_name={full_name}, address={address}, email={email}, issue={issue}, image_path={image_path}")
@@ -49,6 +43,9 @@ try:
     logging.info("Navigating to the webpage...")
     driver.get('http://localhost:5000/tapi.html')
 
+    # Print received arguments for debugging
+    print(f"Received arguments: full_name={full_name}, address={address}, email={email}, issue={issue}, image_path={image_path}")
+
     # Wait for the iframe to be present and then switch to it
     logging.info("Waiting 30 seconds for the iframe to load...")
     time.sleep(30)  # Adjust the wait time as needed
@@ -68,14 +65,50 @@ try:
     driver.switch_to.frame(nested_iframe_1)
     logging.info("Switched to the first nested iframe.")
 
+    # If an image is provided, send "yes" before entering the full name
+    if image_path:
+        # Click the paperclip button to open the file dialog
+        logging.info("Attempting to click the paperclip button using JavaScript...")
+        driver.execute_script("""
+            var paperclipButton = document.querySelector("button[title='Upload']");
+            if (paperclipButton) {
+                paperclipButton.click();
+            }
+        """)
+        logging.info("Clicked the paperclip button for file upload using JavaScript.")
+        time.sleep(5)  # Add a short pause to allow the file dialog to open
+
+        # Locate the file input field and upload an image
+        logging.info("Locating the file input field and uploading an image...")
+        file_input = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
+        )
+        file_input.send_keys(image_path)
+        logging.info("Image uploaded successfully.")
+        time.sleep(10)  # Add a pause after uploading the image
+
+        # Send "yes" before proceeding
+        logging.info("Image detected, sending 'yes' before entering full name...")
+        yes_input = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "input[placeholder='Send a message']"))
+        )
+        yes_input.send_keys("yes")
+        yes_input.send_keys("\n")
+        time.sleep(10)  # Add a 10-second pause after sending "yes"
+
     # Interact with the input field for full name
     logging.info("Locating the input field for full name...")
-    full_name_input = WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[placeholder='Send a message']"))
-    )
-    full_name_input.send_keys(full_name)
-    logging.info(f"Entered full name: {full_name}")
-    time.sleep(10)  # Add a 10-second pause after entering the full name
+    try:
+        full_name_input = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "input[placeholder='Send a message']"))
+        )
+        full_name_input.send_keys(full_name)
+        logging.info(f"Entered full name: {full_name}")
+        time.sleep(10)  # Add a 10-second pause after entering the full name
+    except Exception as e:
+        logging.error(f"Error locating input field: {e}")
+        logging.error(f"Current page source: {driver.page_source}")
+        raise  # Re-raise the exception to ensure it's handled by the outer try-except
 
     # Simulate pressing the Enter key after entering each value
     full_name_input.send_keys("\n")
@@ -120,19 +153,6 @@ try:
     time.sleep(10)  # Add a 10-second pause after entering the issue description
     issue_input.send_keys("\n")
 
-    # Upload the image (if detected) after the issue is entered
-    if image_path:
-        # Ensure the file input is visible and interact with it directly (no clicking paperclip)
-        logging.info("Making the file input visible and uploading an image...")
-        driver.execute_script("""
-            var fileInput = document.querySelector("input[type='file']");
-            fileInput.style.display = 'block';
-        """)
-        file_input = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
-        file_input.send_keys(image_path)
-        logging.info("Image uploaded successfully.")
-        time.sleep(10)  # Add a pause after uploading the image
-
     # Enter "send to property manager"
     logging.info("Entering 'send to property manager'...")
     property_manager_input = WebDriverWait(driver, 20).until(
@@ -171,6 +191,7 @@ try:
     time.sleep(5)
 
     logging.info("Second issue description submitted.")
+
     logging.info("Form submission process completed successfully.")
 
 except Exception as e:

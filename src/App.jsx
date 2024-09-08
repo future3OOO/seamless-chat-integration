@@ -131,22 +131,22 @@ const App = () => {
   if (!isLoaded) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      <p className="text-xl font-semibold">Loading Google Maps...</p>
+      <p className="text-xl font-semibold ml-4">Loading Google Maps...</p>
     </div>;
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl min-h-[630px] transition-all duration-300">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-6">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <div className="flex flex-col items-center mb-8">
           <img src={Logo} alt="Logo" className="h-20 w-auto object-contain mb-4" />
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>
-          <p className="text-base md:text-lg text-gray-600 text-center">Let's get your issue resolved quickly and efficiently!</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>
+          <p className="text-lg md:text-xl text-gray-600 text-center max-w-md">Let's get your issue resolved quickly and efficiently!</p>
         </div>
         
         <ProgressIndicator step={step} />
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
           {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
           {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
@@ -162,7 +162,7 @@ const App = () => {
         </form>
         
         {errors.submit && (
-          <div className="mt-4 p-3 bg-[#f0f7f9] border border-[#3582a1] text-[#3582a1] rounded">
+          <div className="mt-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md">
             {errors.submit}
           </div>
         )}

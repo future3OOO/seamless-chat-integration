@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapPin } from 'lucide-react';
 import { Autocomplete } from '@react-google-maps/api';
 
 const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
   const [isAddressValid, setIsAddressValid] = useState(false);
+  const autocompleteRef = useRef(null);
 
   useEffect(() => {
     setIsAddressValid(formData.address.trim().length > 0);
@@ -11,14 +12,17 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
 
   const onLoad = (autocomplete) => {
     console.log('Autocomplete loaded:', autocomplete);
+    autocompleteRef.current = autocomplete;
   };
 
   const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
+    if (autocompleteRef.current !== null) {
+      const place = autocompleteRef.current.getPlace();
       let formattedAddress = place.formatted_address;
       formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
       handleChange({ target: { name: 'address', value: formattedAddress } });
+    } else {
+      console.warn('Autocomplete is not loaded yet!');
     }
   };
 
@@ -42,7 +46,10 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
                 id="address"
                 name="address"
                 value={formData.address}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  setIsAddressValid(e.target.value.trim().length > 0);
+                }}
                 placeholder="Enter a New Zealand address"
                 className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
                 required
@@ -54,7 +61,10 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
               id="address"
               name="address"
               value={formData.address}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                setIsAddressValid(e.target.value.trim().length > 0);
+              }}
               placeholder="Enter a New Zealand address"
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.address ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
               required

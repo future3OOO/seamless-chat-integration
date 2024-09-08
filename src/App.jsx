@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import { useJsApiLoader } from '@react-google-maps/api';
 import Logo from './assets/logo.svg';
-import { User, MapPin, Mail, FileText, Upload, ArrowLeft, ArrowRight, Trash } from 'lucide-react';
 import PersonalInfoForm from './components/PersonalInfoForm';
 import PropertyDetailsForm from './components/PropertyDetailsForm';
 import IssueDescriptionForm from './components/IssueDescriptionForm';
 import ProgressIndicator from './components/ProgressIndicator';
 import SubmitButton from './components/SubmitButton';
 import ThankYouMessage from './components/ThankYouMessage';
+import FormNavigation from './components/FormNavigation';
+import PoweredByLink from './components/PoweredByLink';
 
 const libraries = ['places'];
 
@@ -81,19 +82,6 @@ const App = () => {
     validateStep();
   }, [validateStep]);
 
-  const nextStep = useCallback(() => {
-    if (isStepValid) {
-      setErrors({});
-      setStep(prevStep => Math.min(prevStep + 1, 3));
-      setIsSubmitClicked(false);
-    }
-  }, [isStepValid]);
-
-  const prevStep = useCallback(() => {
-    setStep(prevStep => Math.max(prevStep - 1, 1));
-    setIsSubmitClicked(false);
-  }, []);
-
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!isSubmitClicked || !isStepValid) return;
@@ -161,27 +149,14 @@ const App = () => {
           {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
           {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
           
-          <div className="flex justify-between mt-6">
-            {step > 1 && (
-              <button type="button" onClick={prevStep} className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
-                <ArrowLeft className="mr-2" size={18} />
-                Previous
-              </button>
-            )}
-            {step < 3 ? (
-              <button 
-                type="button" 
-                onClick={nextStep} 
-                className={`flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
-                disabled={!isStepValid}
-              >
-                Next
-                <ArrowRight className="ml-2" size={18} />
-              </button>
-            ) : (
-              <SubmitButton isLoading={isLoading} errors={errors} setIsSubmitClicked={setIsSubmitClicked} isDisabled={!isStepValid} />
-            )}
-          </div>
+          <FormNavigation 
+            step={step} 
+            setStep={setStep} 
+            isStepValid={isStepValid} 
+            isLoading={isLoading} 
+            errors={errors} 
+            setIsSubmitClicked={setIsSubmitClicked} 
+          />
         </form>
         
         {errors.submit && (
@@ -190,9 +165,7 @@ const App = () => {
           </div>
         )}
 
-        <div className="mt-8 text-center text-sm text-gray-500">
-          Powered by Property Partner
-        </div>
+        <PoweredByLink />
       </div>
     </div>
   );

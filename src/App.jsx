@@ -87,7 +87,7 @@ const App = () => {
     const updatePadding = () => {
       if (containerRef.current) {
         const containerTop = containerRef.current.getBoundingClientRect().top;
-        const newPadding = Math.max(0, (window.innerHeight - containerTop - 600) / 2);
+        const newPadding = Math.max(0, (window.innerHeight - 600) / 2);
         setDynamicPadding(newPadding);
       }
     };

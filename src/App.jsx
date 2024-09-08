@@ -25,6 +25,7 @@ const App = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const [isStepValid, setIsStepValid] = useState(false);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -58,11 +59,35 @@ const App = () => {
     setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }, []);
 
+  const validateStep = useCallback(() => {
+    let isValid = false;
+    switch (step) {
+      case 1:
+        isValid = formData.full_name.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+        break;
+      case 2:
+        isValid = formData.address.trim() !== '';
+        break;
+      case 3:
+        isValid = formData.issue.trim() !== '';
+        break;
+      default:
+        isValid = false;
+    }
+    setIsStepValid(isValid);
+  }, [step, formData]);
+
+  useEffect(() => {
+    validateStep();
+  }, [validateStep]);
+
   const nextStep = useCallback(() => {
-    setErrors({});
-    setStep(prevStep => Math.min(prevStep + 1, 3));
-    setIsSubmitClicked(false);
-  }, []);
+    if (isStepValid) {
+      setErrors({});
+      setStep(prevStep => Math.min(prevStep + 1, 3));
+      setIsSubmitClicked(false);
+    }
+  }, [isStepValid]);
 
   const prevStep = useCallback(() => {
     setStep(prevStep => Math.max(prevStep - 1, 1));
@@ -71,7 +96,7 @@ const App = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (!isSubmitClicked) return;
+    if (!isSubmitClicked || !isStepValid) return;
     
     setIsLoading(true);
     try {
@@ -103,7 +128,7 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [formData, isSubmitClicked]);
+  }, [formData, isSubmitClicked, isStepValid]);
 
   if (isSubmitted) {
     return <ThankYouMessage />;
@@ -144,12 +169,17 @@ const App = () => {
               </button>
             )}
             {step < 3 ? (
-              <button type="button" onClick={nextStep} className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto">
+              <button 
+                type="button" 
+                onClick={nextStep} 
+                className={`flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!isStepValid}
+              >
                 Next
                 <ArrowRight className="ml-2" size={18} />
               </button>
             ) : (
-              <SubmitButton isLoading={isLoading} errors={errors} setIsSubmitClicked={setIsSubmitClicked} />
+              <SubmitButton isLoading={isLoading} errors={errors} setIsSubmitClicked={setIsSubmitClicked} isDisabled={!isStepValid} />
             )}
           </div>
         </form>

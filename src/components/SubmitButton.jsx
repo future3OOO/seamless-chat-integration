@@ -1,10 +1,10 @@
 import React from 'react';
 
-const SubmitButton = ({ isLoading, errors, setIsSubmitClicked }) => (
+const SubmitButton = ({ isLoading, errors, setIsSubmitClicked, isDisabled }) => (
   <button
     type="submit"
-    className="flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
-    disabled={isLoading || Object.keys(errors).length > 0}
+    className={`flex items-center px-4 py-2 bg-[#3582a1] text-white rounded hover:bg-[#2a6a84] transition-colors ml-auto ${isDisabled || isLoading || Object.keys(errors).length > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+    disabled={isDisabled || isLoading || Object.keys(errors).length > 0}
     onClick={() => setIsSubmitClicked(true)}
   >
     {isLoading ? (

@@ -17,6 +17,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => (
             onChange={handleChange}
             placeholder="John Doe"
             className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.full_name ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+            autoComplete="name"
           />
         </div>
         {errors.full_name && <p className="mt-1 text-xs text-[#3582a1]">{errors.full_name}</p>}
@@ -33,6 +34,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => (
             onChange={handleChange}
             placeholder="john@example.com"
             className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3582a1] ${errors.email ? 'border-[#3582a1] bg-[#f0f7f9]' : 'border-gray-300'}`}
+            autoComplete="email"
           />
         </div>
         {errors.email && <p className="mt-1 text-xs text-[#3582a1]">{errors.email}</p>}

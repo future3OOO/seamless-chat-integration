@@ -117,12 +117,6 @@ const App = () => {
     }
   }, [formData, isSubmitClicked, isStepValid]);
 
-  useEffect(() => {
-    console.log(`Current step: ${step}`);
-    console.log('Form container dimensions:', document.querySelector('.bg-white')?.getBoundingClientRect());
-    console.log('Outer container dimensions:', document.querySelector('.min-h-screen')?.getBoundingClientRect());
-  }, [step]);
-
   if (isSubmitted) {
     return <ThankYouMessage />;
   }
@@ -142,7 +136,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] py-8 px-4 sm:py-12 bg-pattern">
-      <div className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto">
+      <div className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto flex flex-col" style={{ height: '90vh' }}>
         <div className="flex flex-col items-center mb-4">
           <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-2" />
           <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">Maintenance Request</h1>
@@ -153,10 +147,12 @@ const App = () => {
           <ProgressIndicator step={step} />
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mx-auto">
-          {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
-          {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
-          {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
+        <form onSubmit={handleSubmit} className="flex-grow flex flex-col w-full max-w-2xl mx-auto">
+          <div className="flex-grow overflow-y-auto">
+            {step === 1 && <PersonalInfoForm formData={formData} handleChange={handleChange} errors={errors} />}
+            {step === 2 && <PropertyDetailsForm formData={formData} handleChange={handleChange} errors={errors} isLoaded={isLoaded} />}
+            {step === 3 && <IssueDescriptionForm formData={formData} handleChange={handleChange} errors={errors} previewUrls={previewUrls} removeImage={removeImage} />}
+          </div>
           
           <FormNavigation 
             step={step} 

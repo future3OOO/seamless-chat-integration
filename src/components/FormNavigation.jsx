@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import SubmitButton from './SubmitButton';
 
 const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSubmitClicked }) => {
@@ -24,7 +24,7 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
             disabled={!isStepValid}
           >
             <span className="mr-2">Next</span>
-            <ArrowRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         ) : (
           <div className="w-full">
@@ -42,7 +42,7 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
             onClick={prevStep}
             className="flex items-center justify-center px-4 py-2 bg-transparent text-gray-500 rounded-full hover:bg-gray-100 transition-colors text-sm font-medium w-full"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ChevronLeft className="mr-2 h-4 w-4" />
             Previous
           </button>
         )}

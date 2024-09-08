@@ -25,7 +25,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 w-full max-w-3xl mx-auto">
+    <div className="space-y-8 w-full max-w-3xl mx-auto">
       <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Issue Description</h2>
       <div className="bg-white rounded-lg shadow-sm">
         <label htmlFor="issue" className="block text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-3 px-4 pt-4">

@@ -189,6 +189,10 @@ const App = () => {
             {errors.submit}
           </div>
         )}
+
+        <div className="mt-8 text-center text-sm text-gray-500">
+          Powered by Property Partner
+        </div>
       </div>
     </div>
   );

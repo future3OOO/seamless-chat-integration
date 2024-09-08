@@ -135,15 +135,15 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4 bg-pattern">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] py-8 px-4 bg-pattern">
       <div className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto">
-        <div className="flex flex-col items-center mb-6">
-          <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-4" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>
+        <div className="flex flex-col items-center mb-4">
+          <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-2" />
+          <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">Maintenance Request</h1>
           <p className="text-base text-gray-600 text-center max-w-md">Let's get your issue resolved quickly and efficiently!</p>
         </div>
         
-        <div className="w-full max-w-2xl mx-auto mb-6">
+        <div className="w-full max-w-2xl mx-auto mb-4">
           <ProgressIndicator step={step} />
         </div>
         

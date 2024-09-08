@@ -15,29 +15,19 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
 
   return (
     <div className="flex flex-col mt-8 space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4">
-        {step > 1 && (
-          <button
-            type="button"
-            onClick={prevStep}
-            className="flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors text-base font-semibold w-full sm:w-auto"
-          >
-            <ArrowLeft className="mr-2 h-5 w-5" />
-            Previous
-          </button>
-        )}
+      <div className="flex flex-col space-y-4">
         {step < 3 ? (
           <button 
             type="button" 
             onClick={nextStep} 
-            className={`flex items-center justify-center px-6 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold w-full sm:w-auto ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center justify-center px-6 py-3 bg-[#3582a1] text-white rounded-full hover:bg-[#2a6a84] transition-colors text-base font-semibold w-full ${!isStepValid ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={!isStepValid}
           >
             <span className="mr-2">Next</span>
             <ArrowRight className="h-5 w-5" />
           </button>
         ) : (
-          <div className="w-full sm:w-auto">
+          <div className="w-full">
             <SubmitButton
               isLoading={isLoading}
               errors={errors}
@@ -45,6 +35,16 @@ const FormNavigation = ({ step, setStep, isStepValid, isLoading, errors, setIsSu
               isDisabled={!isStepValid}
             />
           </div>
+        )}
+        {step > 1 && (
+          <button
+            type="button"
+            onClick={prevStep}
+            className="flex items-center justify-center px-4 py-2 bg-transparent text-gray-500 rounded-full hover:bg-gray-100 transition-colors text-sm font-medium w-full"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Previous
+          </button>
         )}
       </div>
     </div>

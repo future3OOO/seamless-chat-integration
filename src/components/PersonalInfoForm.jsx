@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail } from 'lucide-react';
 
 const PersonalInfoForm = ({ formData, handleChange, errors }) => {
+  const [isNameValid, setIsNameValid] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+
+  useEffect(() => {
+    setIsNameValid(formData.full_name.trim().length > 0);
+    setIsEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email));
+  }, [formData.full_name, formData.email]);
+
   const handleNameChange = (e) => {
     console.log('Name changed:', e.target.value);
     handleChange(e);
@@ -13,7 +21,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
       <div className="space-y-4">
         <div>
           <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name <span className="text-red-500">*</span>
+            Full Name {!isNameValid && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
@@ -33,7 +41,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
         </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email <span className="text-red-500">*</span>
+            Email {!isEmailValid && <span className="text-red-500">*</span>}
           </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />

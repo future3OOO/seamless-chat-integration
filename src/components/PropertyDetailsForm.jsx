@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import { Autocomplete } from '@react-google-maps/api';
 
 const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
+  const [isAddressValid, setIsAddressValid] = useState(false);
+
+  useEffect(() => {
+    setIsAddressValid(formData.address.trim().length > 0);
+  }, [formData.address]);
+
   const onLoad = (autocomplete) => {
     console.log('Autocomplete loaded:', autocomplete);
   };
@@ -21,7 +27,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
       <h2 className="text-2xl font-bold mb-4">Property Details</h2>
       <div>
         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-          Address <span className="text-red-500">*</span>
+          Address {!isAddressValid && <span className="text-red-500">*</span>}
         </label>
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />

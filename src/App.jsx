@@ -8,6 +8,7 @@ import ProgressIndicator from './components/ProgressIndicator';
 import FormNavigation from './components/FormNavigation';
 import PoweredByLink from './components/PoweredByLink';
 import ThankYouMessage from './components/ThankYouMessage';
+import { debounce } from 'lodash';
 
 const libraries = ['places'];
 
@@ -36,14 +37,14 @@ const App = () => {
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
     if (name === 'images') {
-      const newImages = Array.from(files);
+      const newImages = Array.from(files).slice(0, 5); // Limit to 5 images
       setFormData(prevState => ({
         ...prevState,
-        images: [...prevState.images, ...newImages]
+        images: [...prevState.images, ...newImages].slice(0, 5)
       }));
       
       const newPreviewUrls = newImages.map(file => URL.createObjectURL(file));
-      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls].slice(0, 5));
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -62,19 +63,26 @@ const App = () => {
 
   const validateStep = useCallback(() => {
     let isValid = false;
+    let newErrors = {};
+
     switch (step) {
       case 1:
         isValid = formData.full_name.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+        if (formData.full_name.trim() === '') newErrors.full_name = 'Name is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Valid email is required';
         break;
       case 2:
         isValid = formData.address.trim() !== '';
+        if (formData.address.trim() === '') newErrors.address = 'Address is required';
         break;
       case 3:
         isValid = formData.issue.trim() !== '';
+        if (formData.issue.trim() === '') newErrors.issue = 'Issue description is required';
         break;
       default:
         isValid = false;
     }
+    setErrors(newErrors);
     setIsStepValid(isValid);
   }, [step, formData]);
 
@@ -82,41 +90,54 @@ const App = () => {
     validateStep();
   }, [validateStep]);
 
+  const debouncedSubmit = useCallback(
+    debounce(async (formDataToSend) => {
+      try {
+        const response = await fetch('http://localhost:5000/submit', {
+          method: 'POST',
+          body: formDataToSend,
+        });
+
+        if (response.ok) {
+          setIsSubmitted(true);
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Server error');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        setErrors({ submit: error.message || 'Network error. Please try again.' });
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500),
+    []
+  );
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (!isSubmitClicked || !isStepValid) return;
+    if (!isSubmitClicked || !isStepValid || isLoading) return;
     
     setIsLoading(true);
-    try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (key === 'images') {
-          formData[key].forEach((image) => {
-            formDataToSend.append('images', image);
-          });
-        } else {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
-
-      const response = await fetch('http://localhost:5000/submit', {
-        method: 'POST',
-        body: formDataToSend,
-      });
-
-      if (response.ok) {
-        setIsSubmitted(true);
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach(key => {
+      if (key === 'images') {
+        formData[key].forEach((image) => {
+          formDataToSend.append('images', image);
+        });
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Server error');
+        formDataToSend.append(key, formData[key]);
       }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setErrors({ submit: error.message || 'Network error. Please try again.' });
-    } finally {
-      setIsLoading(false);
+    });
+
+    debouncedSubmit(formDataToSend);
+  }, [formData, isSubmitClicked, isStepValid, isLoading, debouncedSubmit]);
+
+  const handleStepChange = (newStep) => {
+    if (newStep >= 1 && newStep <= 3) {
+      setStep(newStep);
     }
-  }, [formData, isSubmitClicked, isStepValid]);
+  };
 
   if (isSubmitted) {
     return <ThankYouMessage />;
@@ -145,7 +166,7 @@ const App = () => {
         </div>
         
         <div className="w-full max-w-2xl mx-auto mb-4">
-          <ProgressIndicator step={step} />
+          <ProgressIndicator step={step} onStepClick={handleStepChange} />
         </div>
         
         <form onSubmit={handleSubmit} className="flex-grow flex flex-col w-full max-w-2xl mx-auto">

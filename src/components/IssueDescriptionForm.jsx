@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FileText, Upload, Trash, Camera } from 'lucide-react';
+import { useDropzone } from 'react-dropzone';
 
 const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, removeImage }) => {
   const [isIssueValid, setIsIssueValid] = useState(false);
@@ -24,6 +25,17 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
+
+  const onDrop = (acceptedFiles) => {
+    const newImages = acceptedFiles.slice(0, 5 - formData.images.length);
+    handleChange({ target: { name: 'images', files: newImages } });
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+    maxFiles: 5 - formData.images.length,
+  });
 
   return (
     <div className="space-y-6 w-full max-w-2xl mx-auto">
@@ -57,25 +69,16 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           Upload Photos (Recommended)
         </h3>
         <p className="text-base text-gray-600 mb-4">
-          Adding photos helps us understand and address your issue more quickly.
+          Adding photos helps us understand and address your issue more quickly. (Max 5 images)
         </p>
-        <div className="relative">
-          <input
-            type="file"
-            id="images"
-            name="images"
-            onChange={handleChange}
-            accept="image/*"
-            multiple
-            className="hidden"
-          />
-          <label
-            htmlFor="images"
-            className="flex items-center justify-center w-full px-4 py-3 border-2 border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors"
-          >
+        <div {...getRootProps()} className="dropzone">
+          <input {...getInputProps()} />
+          <div className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
             <Upload className="mr-3 text-[#3582a1]" size={24} />
-            <span className="text-base font-medium text-[#3582a1]">Choose photos</span>
-          </label>
+            <span className="text-base font-medium text-[#3582a1]">
+              {isDragActive ? "Drop the files here" : "Drag 'n' drop some files here, or click to select files"}
+            </span>
+          </div>
         </div>
         {previewUrls.length > 0 && (
           <div className="mt-4 grid grid-cols-2 gap-4">

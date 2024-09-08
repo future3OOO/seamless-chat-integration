@@ -78,7 +78,6 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
             />
           )}
         </div>
-        {errors.address && <p className="mt-2 text-sm text-red-600">{errors.address}</p>}
       </div>
     </div>
   );

@@ -69,7 +69,6 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
             required
           ></textarea>
         </div>
-        {errors.issue && <p className="mt-2 text-sm text-red-600">{errors.issue}</p>}
       </div>
       <div className="bg-[#f0f7f9] p-4 rounded-lg border-2 border-[#3582a1]">
         <h3 className="text-lg font-semibold mb-3 text-[#3582a1] flex items-center">

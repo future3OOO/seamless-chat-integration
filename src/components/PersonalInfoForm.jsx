@@ -39,7 +39,6 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             required
           />
         </div>
-        {errors.full_name && <p className="mt-2 text-sm text-red-600">{errors.full_name}</p>}
       </div>
       <div className="bg-white rounded-lg">
         <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-2">
@@ -60,7 +59,6 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             required
           />
         </div>
-        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
       </div>
     </div>
   );

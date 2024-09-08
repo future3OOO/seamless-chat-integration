@@ -25,12 +25,13 @@ const ProgressIndicator = ({ step }) => {
           </div>
         ))}
       </div>
-      <div className="absolute top-5 left-0 h-1 bg-gray-300 w-full" style={{ zIndex: 0 }}>
+      <div className="absolute top-5 left-0 right-0 h-1 bg-gray-300" style={{ zIndex: 0 }}>
         <div 
           className="h-full bg-[#3582a1] transition-all duration-300 ease-in-out"
           style={{ 
-            width: `calc(${((step - 1) / (steps.length - 1)) * 100}% + 20px)`,
-            marginLeft: '-10px'
+            width: `${((step - 1) / (steps.length - 1)) * 100}%`,
+            marginLeft: '5px',
+            marginRight: '5px'
           }}
         ></div>
       </div>

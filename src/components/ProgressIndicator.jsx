@@ -2,10 +2,13 @@ import React, { useEffect } from 'react';
 
 const ProgressIndicator = ({ step }) => {
   const steps = ['Personal', 'Property', 'Issue'];
+  const lineColor = '#3582a1';
 
   useEffect(() => {
+    const lineWidth = ((step - 1) / (steps.length - 1)) * 100;
     console.log(`Current step: ${step}`);
-    console.log(`Progress line width: ${((step - 1) / (steps.length - 1)) * 100}%`);
+    console.log(`Progress line color: ${lineColor}`);
+    console.log(`Progress line width: ${lineWidth}%`);
   }, [step]);
 
   return (

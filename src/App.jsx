@@ -136,7 +136,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] p-4 bg-pattern">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
+      <div className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto">
         <div className="flex flex-col items-center mb-6">
           <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-4" />
           <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Maintenance Request</h1>

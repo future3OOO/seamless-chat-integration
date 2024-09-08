@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User, Mail } from 'lucide-react';
 
 const PersonalInfoForm = ({ formData, handleChange, errors }) => {
   const [isNameValid, setIsNameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const nameInputRef = useRef(null);
 
   useEffect(() => {
     setIsNameValid(formData.full_name.trim().length > 0);
@@ -11,9 +12,9 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
   }, [formData.full_name, formData.email]);
 
   useEffect(() => {
-    console.log('PersonalInfoForm rendered');
-    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
-    console.log('Input field dimensions:', document.querySelector('input[name="full_name"]')?.getBoundingClientRect());
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
   }, []);
 
   return (
@@ -25,6 +26,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
         <div className="relative">
           <User className="absolute left-4 top-4 text-[#3582a1]" size={24} />
           <input
+            ref={nameInputRef}
             type="text"
             id="full_name"
             name="full_name"

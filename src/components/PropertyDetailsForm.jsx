@@ -5,15 +5,16 @@ import { Autocomplete } from '@react-google-maps/api';
 const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
   const [isAddressValid, setIsAddressValid] = useState(false);
   const autocompleteRef = useRef(null);
+  const addressInputRef = useRef(null);
 
   useEffect(() => {
     setIsAddressValid(formData.address.trim().length > 0);
   }, [formData.address]);
 
   useEffect(() => {
-    console.log('PropertyDetailsForm rendered');
-    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
-    console.log('Input field dimensions:', document.querySelector('input[name="address"]')?.getBoundingClientRect());
+    if (addressInputRef.current) {
+      addressInputRef.current.focus();
+    }
   }, []);
 
   const onLoad = (autocomplete) => {
@@ -44,6 +45,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
               restrictions={{ country: "nz" }}
             >
               <input
+                ref={addressInputRef}
                 type="text"
                 id="address"
                 name="address"
@@ -60,6 +62,7 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
             </Autocomplete>
           ) : (
             <input
+              ref={addressInputRef}
               type="text"
               id="address"
               name="address"

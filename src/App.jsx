@@ -26,7 +26,6 @@ const App = () => {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
-  const [dynamicPadding, setDynamicPadding] = useState(0);
   const containerRef = useRef(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -83,20 +82,6 @@ const App = () => {
     validateStep();
   }, [validateStep]);
 
-  useEffect(() => {
-    const updatePadding = () => {
-      if (containerRef.current) {
-        const containerTop = containerRef.current.getBoundingClientRect().top;
-        const newPadding = Math.max(0, (window.innerHeight - 600) / 2);
-        setDynamicPadding(newPadding);
-      }
-    };
-
-    updatePadding();
-    window.addEventListener('resize', updatePadding);
-    return () => window.removeEventListener('resize', updatePadding);
-  }, []);
-
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!isSubmitClicked || !isStepValid) return;
@@ -151,7 +136,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] py-8 px-4 sm:py-12 bg-pattern" style={{ paddingTop: `${dynamicPadding}px`, paddingBottom: `${dynamicPadding}px` }}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#3582a1] to-[#8ecfdc] py-8 px-4 sm:py-12 bg-pattern md:py-8">
       <div ref={containerRef} className="bg-white p-6 rounded-lg w-full max-w-3xl mx-auto flex flex-col">
         <div className="flex flex-col items-center mb-4">
           <img src={Logo} alt="Logo" className="h-16 w-auto object-contain mb-2" />

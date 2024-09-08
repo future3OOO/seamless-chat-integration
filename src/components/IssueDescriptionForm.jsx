@@ -13,12 +13,8 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.focus();
     }
-  }, [formData.issue]);
-
-  useEffect(() => {
-    console.log('IssueDescriptionForm rendered');
-    console.log('Form dimensions:', document.querySelector('.space-y-6')?.getBoundingClientRect());
   }, []);
 
   const handleTextareaChange = (e) => {

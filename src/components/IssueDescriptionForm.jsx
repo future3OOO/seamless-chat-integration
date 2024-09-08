@@ -4,11 +4,19 @@ import { useDropzone } from 'react-dropzone';
 
 const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, removeImage }) => {
   const [isIssueValid, setIsIssueValid] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const textareaRef = useRef(null);
 
   useEffect(() => {
     setIsIssueValid(formData.issue.trim().length > 0);
+    setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [formData.issue]);
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -71,15 +79,32 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
         <p className="text-base text-gray-600 mb-4">
           Adding photos helps us understand and address your issue more quickly. (Max 5 images)
         </p>
-        <div {...getRootProps()} className="dropzone">
-          <input {...getInputProps()} />
-          <div className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-            <Upload className="mr-3 text-[#3582a1]" size={24} />
-            <span className="text-base font-medium text-[#3582a1]">
-              {isDragActive ? "Drop the files here" : "Drag 'n' drop some files here, or click to select files"}
-            </span>
+        {!isMobile ? (
+          <div {...getRootProps()} className="dropzone">
+            <input {...getInputProps()} />
+            <div className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
+              <Upload className="mr-3 text-[#3582a1]" size={24} />
+              <span className="text-base font-medium text-[#3582a1]">
+                {isDragActive ? "Drop the files here" : "Drag 'n' drop some files here, or click to select files"}
+              </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mb-4">
+            <label htmlFor="mobile-image-upload" className="flex items-center justify-center w-full px-4 py-6 border-2 border-[#3582a1] rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
+              <Upload className="mr-3 text-[#3582a1]" size={24} />
+              <span className="text-base font-medium text-[#3582a1]">Tap to select files</span>
+            </label>
+            <input
+              id="mobile-image-upload"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => onDrop(Array.from(e.target.files))}
+              className="hidden"
+            />
+          </div>
+        )}
         {previewUrls.length > 0 && (
           <div className="mt-4 grid grid-cols-2 gap-4">
             {previewUrls.map((url, index) => (

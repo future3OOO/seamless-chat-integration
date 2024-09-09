@@ -7,6 +7,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
   const [isMobile, setIsMobile] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const textareaRef = useRef(null);
+  const [totalSize, setTotalSize] = useState(0);
 
   useEffect(() => {
     setIsIssueValid(formData.issue.trim().length > 0);
@@ -37,8 +38,15 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
 
   const onDrop = (acceptedFiles, rejectedFiles) => {
     setUploadError('');
-    const newImages = acceptedFiles.slice(0, 5 - formData.images.length);
-    handleChange({ target: { name: 'images', files: newImages } });
+    const newTotalSize = totalSize + acceptedFiles.reduce((sum, file) => sum + file.size, 0);
+    
+    if (newTotalSize > 30 * 1024 * 1024) {
+      setUploadError('Total file size exceeds 30MB limit. Please remove some files.');
+      return;
+    }
+
+    setTotalSize(newTotalSize);
+    handleChange({ target: { name: 'images', files: [...formData.images, ...acceptedFiles] } });
 
     if (rejectedFiles.length > 0) {
       setUploadError('Some files were not accepted. Please ensure you are uploading image files (jpg, jpeg, png, gif).');
@@ -50,8 +58,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif']
     },
-    maxFiles: 5 - formData.images.length,
-    maxSize: 5242880, // 5MB
+    maxFiles: 5,
   });
 
   return (
@@ -85,7 +92,7 @@ const IssueDescriptionForm = ({ formData, handleChange, errors, previewUrls, rem
           Upload Photos (Recommended)
         </h3>
         <p className="text-base text-gray-600 mb-4">
-          Adding photos helps us understand and address your issue more quickly. (Max 5 images, 5MB each)
+          Adding photos helps us understand and address your issue more quickly. (Max 5 images, 30MB total)
         </p>
         {!isMobile ? (
           <div {...getRootProps()} className="dropzone">

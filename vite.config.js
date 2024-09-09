@@ -7,6 +7,7 @@ import { compression } from 'vite-plugin-compression2';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
+  base: '/seamless-chat-integration/',
   server: {
     host: "::",
     port: "8000",

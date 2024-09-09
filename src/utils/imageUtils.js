@@ -1,5 +1,3 @@
-import { createCanvas, loadImage } from 'canvas';
-
 const canvasToBlob = (canvas) => {
   return new Promise((resolve) => {
     canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.9);
@@ -12,7 +10,13 @@ export const mergeImages = async (images) => {
 
   try {
     // Load all images
-    const loadedImages = await Promise.all(images.map(img => loadImage(img)));
+    const loadedImages = await Promise.all(images.map(img => {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.src = img;
+      });
+    }));
 
     // Calculate dimensions
     let totalHeight = 0;
@@ -26,7 +30,9 @@ export const mergeImages = async (images) => {
     });
 
     // Create canvas
-    const canvas = createCanvas(maxWidth, totalHeight);
+    const canvas = document.createElement('canvas');
+    canvas.width = maxWidth;
+    canvas.height = totalHeight;
     const ctx = canvas.getContext('2d');
 
     // Draw background

@@ -2,27 +2,38 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
-import { splitVendorChunkPlugin } from 'vite';
-import { compression } from 'vite-plugin-compression2';
+import commonjs from '@rollup/plugin-commonjs';
+import viteCompression from 'vite-plugin-compression2';
+import autoprefixer from 'autoprefixer';
+import cssnano from 'cssnano';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ command }) => ({
-  base: '/seamless-chat-integration/',
+export default defineConfig({
   server: {
     host: "::",
     port: "8000",
   },
   plugins: [
     react(),
-    splitVendorChunkPlugin(),
-    compression({
+    commonjs({
+      include: /node_modules/,
+    }),
+    // Gzip Compression
+    viteCompression({
       algorithm: 'gzip',
-      exclude: [/\.(br)$/, /\.(gz)$/],
+      ext: '.gz',
     }),
-    compression({
+    // Brotli Compression (disabled in development)
+    viteCompression({
       algorithm: 'brotliCompress',
-      exclude: [/\.(br)$/, /\.(gz)$/],
+      ext: '.br',
+      disable: process.env.NODE_ENV === 'development',
     }),
+    {
+      name: 'debug-plugin',
+      resolveId(source, importer) {
+        console.log(`Resolving: ${source} from ${importer}`);
+      }
+    }
   ],
   resolve: {
     alias: [
@@ -37,25 +48,46 @@ export default defineConfig(({ command }) => ({
     ],
   },
   build: {
-    sourcemap: command === 'serve',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false,
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ...splitVendorChunkPlugin(),
+        entryFileNames: '[name].[hash].js',
+        chunkFileNames: '[name].[hash].js',
+        assetFileNames: '[name].[hash].[ext]',
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('lodash')) {
+              return 'lodash-vendor';
+            }
+            return 'vendor';
+          }
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    esbuild: {
+      drop: ['console', 'debugger'],  // Remove console.log and debugger in production
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        autoprefixer(),  // Add vendor prefixes
+        cssnano({ preset: 'default' })  // Minify CSS
+      ],
+    },
+  },
+  define: {
+    'process.env': {},
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', '@react-google-maps/api', 'lodash'],
   },
-}));
+});

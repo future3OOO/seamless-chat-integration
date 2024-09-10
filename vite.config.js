@@ -4,8 +4,6 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import commonjs from '@rollup/plugin-commonjs';
 import viteCompression from 'vite-plugin-compression2';
-import autoprefixer from 'autoprefixer';
-import cssnano from 'cssnano';
 
 export default defineConfig({
   server: {
@@ -77,12 +75,7 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: {
-      plugins: [
-        autoprefixer(),  // Add vendor prefixes
-        cssnano({ preset: 'default' })  // Minify CSS
-      ],
-    },
+    // No postcss configuration, since we're removing autoprefixer
   },
   define: {
     'process.env': {},

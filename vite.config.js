@@ -5,11 +5,12 @@ import { resolve } from "path";
 import commonjs from '@rollup/plugin-commonjs';
 import viteCompression from 'vite-plugin-compression2';
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  base: '/seamless-chat-integration/',  // Set the base URL, useful for deployment in subdirectories
+  plugins: [react()],
+  base: '/seamless-chat-integration/',  // Set the base URL for GitHub Pages deployment
   server: {
-    host: "::",  // Allow IPv6
-    port: "8000",  // Set local dev server to port 8000
+    port: 3000,  // Set local dev server to port 3000
   },
   plugins: [
     react(),  // React support

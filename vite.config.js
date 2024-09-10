@@ -8,9 +8,17 @@ import viteCompression from 'vite-plugin-compression2';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/seamless-chat-integration/',  // Set the base URL for GitHub Pages deployment
-build: {
-    outDir: 'docs', // Change the output directory to 'docs'
+  base: '/seamless-chat-integration/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
+      }
+    }
   },
   server: {
     port: 3000,  // Set local dev server to port 3000

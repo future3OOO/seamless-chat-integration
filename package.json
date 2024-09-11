@@ -9,8 +9,8 @@
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "build:dev": "vite build --mode development",
-    "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
+  
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",

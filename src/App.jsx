@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useJsApiLoader } from '@react-google-maps/api';
 import { debounce } from 'lodash';
 
-import Logo from './assets/logo.svg';
+import Logo from './assets/logo.svg'; // Correct relative path
 import PersonalInfoForm from './components/PersonalInfoForm';
 import PropertyDetailsForm from './components/PropertyDetailsForm';
 import IssueDescriptionForm from './components/IssueDescriptionForm';
@@ -24,13 +24,12 @@ const App = () => {
   const containerRef = useRef(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Ensure your API key is correct
-    libraries, // If you need libraries like "places"
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries,
   });
 
   const { formState, errors, setErrors, validateField } = useFormContext();
 
-  // Always declare hooks at the top level and in the same order
   const validateStep = useCallback(() => {
     let isValid = true;
     let newErrors = {};
@@ -52,8 +51,12 @@ const App = () => {
 
   const debouncedSubmit = useMemo(
     () => debounce(async (formDataToSend) => {
+      const endpoint = process.env.NODE_ENV === 'production' 
+        ? 'https://your-api-endpoint.com/submit' 
+        : 'http://localhost:5000/submit';
+        
       try {
-        const response = await fetch('http://localhost:5000/submit', {
+        const response = await fetch(endpoint, {
           method: 'POST',
           body: formDataToSend,
         });
@@ -96,7 +99,7 @@ const App = () => {
     }
   }, []);
 
-  // Keep hook usage consistent in all renders, including memoization
+  // Add useMemo here to memoize renderForm and prevent unnecessary re-renders
   const renderForm = useMemo(() => {
     switch (step) {
       case 1:
@@ -108,7 +111,7 @@ const App = () => {
       default:
         return null;
     }
-  }, [step]); // Adding step as a dependency ensures this logic re-renders correctly
+  }, [step]); // Dependencies include 'step'
 
   if (isSubmitted) {
     return <ThankYouMessage />;
@@ -146,7 +149,7 @@ const App = () => {
           </div>
           <form onSubmit={handleSubmit} className="flex-grow flex flex-col w-full max-w-2xl mx-auto">
             <div className="flex-grow overflow-y-auto">
-              {renderForm} {/* Ensure this is a memoized function */}
+              {renderForm} {/* Now memoized with useMemo */}
             </div>
             <FormNavigation 
               step={step} 

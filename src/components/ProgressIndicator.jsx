@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const ProgressIndicator = ({ step }) => {
+const ProgressIndicator = ({ step, onStepClick }) => {
   const steps = ['Personal', 'Property', 'Issue'];
   const activeColor = '#2a6a84';
   const completedColor = '#3582a1';
@@ -16,7 +16,11 @@ const ProgressIndicator = ({ step }) => {
     <div className="mb-8 relative w-full">
       <div className="flex justify-between items-center">
         {steps.map((label, index) => (
-          <div key={index} className="flex flex-col items-center relative z-10">
+          <div 
+            key={index} 
+            className="flex flex-col items-center relative z-10 cursor-pointer"
+            onClick={() => onStepClick(index + 1)}
+          >
             <div
               className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl transition-all duration-300 ease-in-out ${
                 index + 1 === step

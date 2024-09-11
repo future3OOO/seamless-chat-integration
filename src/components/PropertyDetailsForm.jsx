@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin } from 'lucide-react';
 import { Autocomplete } from '@react-google-maps/api';
+import { useFormContext } from '../FormContext';
 
-const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
+const PropertyDetailsForm = () => {
+  const { formState, handleChange, isLoaded, loadError } = useFormContext();
   const [isAddressValid, setIsAddressValid] = useState(false);
   const autocompleteRef = useRef(null);
   const addressInputRef = useRef(null);
 
   useEffect(() => {
-    setIsAddressValid(formData.address.trim().length > 0);
-  }, [formData.address]);
+    setIsAddressValid(formState.address.trim().length > 0);
+  }, [formState.address]);
 
   useEffect(() => {
     if (addressInputRef.current) {
@@ -18,17 +20,27 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
   }, []);
 
   const onLoad = (autocomplete) => {
+    console.log('Autocomplete loaded:', autocomplete);
     autocompleteRef.current = autocomplete;
   };
 
   const onPlaceChanged = () => {
     if (autocompleteRef.current !== null) {
       const place = autocompleteRef.current.getPlace();
+      console.log('Place changed:', place);
       let formattedAddress = place.formatted_address;
       formattedAddress = formattedAddress.replace(/, New Zealand$/, '');
       handleChange({ target: { name: 'address', value: formattedAddress } });
     }
   };
+
+  if (loadError) {
+    return <div>Error loading Google Maps API: {loadError.message}</div>;
+  }
+
+  if (!isLoaded) {
+    return <div>Loading Google Maps API...</div>;
+  }
 
   return (
     <div className="space-y-6 w-full max-w-2xl mx-auto">
@@ -38,35 +50,17 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
         </label>
         <div className="relative">
           <MapPin className="absolute left-4 top-4 text-[#3582a1]" size={24} />
-          {isLoaded ? (
-            <Autocomplete
-              onLoad={onLoad}
-              onPlaceChanged={onPlaceChanged}
-              restrictions={{ country: "nz" }}
-            >
-              <input
-                ref={addressInputRef}
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={(e) => {
-                  handleChange(e);
-                  setIsAddressValid(e.target.value.trim().length > 0);
-                }}
-                placeholder="Enter a New Zealand address"
-                className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
-                style={{ borderColor: '#3582a1' }}
-                required
-              />
-            </Autocomplete>
-          ) : (
+          <Autocomplete
+            onLoad={onLoad}
+            onPlaceChanged={onPlaceChanged}
+            restrictions={{ country: "nz" }}
+          >
             <input
               ref={addressInputRef}
               type="text"
               id="address"
               name="address"
-              value={formData.address}
+              value={formState.address}
               onChange={(e) => {
                 handleChange(e);
                 setIsAddressValid(e.target.value.trim().length > 0);
@@ -75,10 +69,10 @@ const PropertyDetailsForm = ({ formData, handleChange, errors, isLoaded }) => {
               className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
               style={{ borderColor: '#3582a1' }}
               required
+              autoComplete="off"
             />
-          )}
+          </Autocomplete>
         </div>
-        {errors.address && <p className="mt-2 text-sm text-red-600">{errors.address}</p>}
       </div>
     </div>
   );

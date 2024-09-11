@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Mail } from 'lucide-react';
+import { useFormContext } from '../FormContext.jsx'; // Update this import path
 
-const PersonalInfoForm = ({ formData, handleChange, errors }) => {
+const PersonalInfoForm = () => {
+  const { formState, handleChange, errors } = useFormContext();
   const [isNameValid, setIsNameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const nameInputRef = useRef(null);
 
   useEffect(() => {
-    setIsNameValid(formData.full_name.trim().length > 0);
-    setIsEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email));
-  }, [formData.full_name, formData.email]);
+    setIsNameValid(formState.full_name.trim().length > 0);
+    setIsEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email));
+  }, [formState.full_name, formState.email]);
 
   useEffect(() => {
     if (nameInputRef.current) {
@@ -30,7 +32,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             type="text"
             id="full_name"
             name="full_name"
-            value={formData.full_name}
+            value={formState.full_name}
             onChange={handleChange}
             placeholder="John Doe"
             className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
@@ -39,7 +41,6 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             required
           />
         </div>
-        {errors.full_name && <p className="mt-2 text-sm text-red-600">{errors.full_name}</p>}
       </div>
       <div className="bg-white rounded-lg">
         <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-2">
@@ -51,7 +52,7 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             type="email"
             id="email"
             name="email"
-            value={formData.email}
+            value={formState.email}
             onChange={handleChange}
             placeholder="john@example.com"
             className="w-full pl-12 pr-4 py-4 border-2 rounded-lg focus:border-[#3582a1] text-base bg-gray-50 transition-all duration-200 ease-in-out outline-none"
@@ -60,7 +61,6 @@ const PersonalInfoForm = ({ formData, handleChange, errors }) => {
             required
           />
         </div>
-        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
       </div>
     </div>
   );

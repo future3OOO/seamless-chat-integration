@@ -6,10 +6,11 @@ import commonjs from '@rollup/plugin-commonjs';
 import viteCompression from 'vite-plugin-compression2';
 
 export default defineConfig({
-  base: '/seamless-chat-integration/',  // Set the base URL, useful for deployment in subdirectories
+  base: process.env.NODE_ENV === 'production' ? '/seamless-chat-integration/' : '/',  // Dynamic base URL
   server: {
     host: "::",  // Allow IPv6
-    port: "8000",  // Set local dev server to port 8000
+    port: 8000,  // Set local dev server to port 8000
+    open: true,  // Automatically open the browser when starting the dev server
   },
   plugins: [
     react(),  // React support
@@ -26,7 +27,7 @@ export default defineConfig({
       algorithm: 'brotliCompress',
       ext: '.br',
       disable: process.env.NODE_ENV === 'development',  // Disable Brotli during development
-    }), 
+    }),
   ],
   resolve: {
     alias: [
@@ -41,6 +42,8 @@ export default defineConfig({
     ],
   },
   build: {
+    outDir: 'dist',  // Specify the output directory
+    assetsDir: 'assets',  // Specify the assets directory within the output directory
     target: 'esnext',  // Target modern browsers using ESNext
     minify: 'esbuild',  // Use esbuild for fast minification
     sourcemap: false,  // Disable sourcemaps in production

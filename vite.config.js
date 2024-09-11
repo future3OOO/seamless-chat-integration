@@ -6,7 +6,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import viteCompression from 'vite-plugin-compression2';
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/seamless-chat-integration/' : '/',  // Dynamic base URL
+  base: '/',  // Change this to '/' for Vercel deployment
   server: {
     host: "::",  // Allow IPv6
     port: 8000,  // Set local dev server to port 8000
